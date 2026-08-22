@@ -1,0 +1,289 @@
+/* Mobile Responsive CSS - Global Styles */
+
+/* Sidebar Scrollbar Styles */
+.side-drawer-nav::-webkit-scrollbar {
+  width: 6px;
+}
+
+.side-drawer-nav::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+.side-drawer-nav::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 3px;
+}
+
+.side-drawer-nav::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+.side-drawer-nav {
+  scrollbar-width: thin;
+  scrollbar-color: #4b5563 #1f2937;
+}
+
+/* Global Media Queries */
+@media (max-width: 767px) {
+  /* Reduce font sizes globally */
+  body {
+    font-size: 14px;
+  }
+  
+  h1 {
+    font-size: 1.5rem !important;
+  }
+  
+  h2 {
+    font-size: 1.3rem !important;
+  }
+  
+  h3 {
+    font-size: 1.1rem !important;
+  }
+  
+  h4 {
+    font-size: 1rem !important;
+  }
+  
+  /* Reduce padding and margins */
+  .container {
+    padding: 0 15px;
+  }
+  
+  .layout_padding {
+    padding: 30px 0 !important;
+  }
+  
+  /* Header Section Mobile Styles */
+  .header_section .containt_main {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  
+  .toggle_icon {
+    order: -1;
+    text-align: left;
+    margin-bottom: 10px;
+  }
+  
+  .dropdown {
+    order: 0;
+    margin-bottom: 10px;
+  }
+  
+  .main {
+    order: 1;
+    margin-bottom: 10px;
+  }
+  
+  .header_box {
+    order: 2;
+  }
+  
+  .header_section .form-control {
+    font-size: 14px !important;
+    padding: 8px 12px !important;
+  }
+  
+  .header_section .btn {
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+  }
+  
+  /* Banner Section Mobile Styles */
+  .banner_taital {
+    font-size: 1.8rem !important;
+    line-height: 1.2 !important;
+    text-align: center;
+  }
+  
+  .buynow_bt a {
+    font-size: 14px !important;
+    padding: 10px 20px !important;
+  }
+  
+  /* Product Section Mobile Styles */
+  .fashion_taital {
+    font-size: 1.5rem !important;
+    text-align: center;
+    margin-bottom: 20px !important;
+  }
+  
+  .box_main {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .shirt_text {
+    font-size: 1rem !important;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .price_text {
+    font-size: 0.9rem !important;
+    margin: 10px 0 !important;
+  }
+  
+  .tshirt_img {
+    margin: 15px 0;
+  }
+  
+  .tshirt_img img {
+    max-height: 180px !important;
+  }
+  
+  .btn_main {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 10px;
+  }
+  
+  .buy_bt button,
+  .seemore_bt a {
+    font-size: 12px !important;
+    padding: 8px 16px !important;
+    width: 100%;
+    text-align: center;
+  }
+  
+  /* Cart and User Icons Mobile Styles */
+  .login_menu ul {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .login_menu ul li a {
+    font-size: 12px !important;
+    padding: 8px !important;
+  }
+  
+  .login_menu ul li i {
+    font-size: 14px !important;
+  }
+  
+  .padding_10 {
+    display: none;
+  }
+  
+  /* Carousel Controls Mobile */
+  .carousel-control-prev,
+  .carousel-control-next {
+    width: 30px !important;
+    height: 30px !important;
+    top: 50% !important;
+  }
+  
+  .carousel-control-prev i,
+  .carousel-control-next i {
+    font-size: 14px !important;
+  }
+  
+  /* Footer Mobile Styles */
+  .footer_section {
+    padding: 30px 0 !important;
+  }
+  
+  .footer_section h3 {
+    font-size: 1.1rem !important;
+    margin-bottom: 15px !important;
+  }
+  
+  .footer_section p,
+  .footer_section a {
+    font-size: 12px !important;
+  }
+}
+
+/* Tablet Styles */
+@media (min-width: 768px) and (max-width: 991px) {
+  .container {
+    padding: 0 20px;
+  }
+  
+  .fashion_taital {
+    font-size: 1.7rem !important;
+  }
+  
+  .shirt_text {
+    font-size: 1.1rem !important;
+  }
+  
+  .tshirt_img img {
+    max-height: 220px !important;
+  }
+}
+
+/* Large Mobile Styles */
+@media (min-width: 576px) and (max-width: 767px) {
+  .banner_taital {
+    font-size: 2rem !important;
+  }
+  
+  .fashion_taital {
+    font-size: 1.7rem !important;
+  }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 575px) {
+  .header_section .containt_main {
+    padding: 10px;
+  }
+  
+  .toggle_icon {
+    margin-bottom: 15px;
+  }
+  
+  .banner_taital {
+    font-size: 1.6rem !important;
+    padding: 0 20px;
+  }
+  
+  .fashion_taital {
+    font-size: 1.4rem !important;
+  }
+  
+  .box_main {
+    padding: 15px;
+  }
+  
+  .btn_main {
+    padding: 0 5px;
+  }
+}
+
+/* Touch-friendly targets */
+@media (max-width: 767px) {
+  /* Ensure minimum touch targets */
+  .btn,
+  button,
+  a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Increase spacing between clickable elements */
+  .btn_main > div {
+    margin-bottom: 8px;
+  }
+  
+  /* Make dropdowns easier to tap */
+  select.form-control {
+    min-height: 44px;
+  }
+  
+  /* Make search input easier to use */
+  input.form-control {
+    min-height: 44px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}

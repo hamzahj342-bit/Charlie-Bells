@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Homepage -->
+  <url>
+    <loc>https://www.saithchemicals.com/</loc>
+    <priority>1.0</priority>
+    <changefreq>daily</changefreq>
+  </url>
+
+  <!-- Products Barcode URLs (Add your 3 barcodes below) -->
+  <url>
+    <loc>https://www.saithchemicals.com/product/2344677343854</loc>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.saithchemicals.com/product/3373882222974</loc>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.saithchemicals.com/product/3373882245713</loc>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+</urlset>
