@@ -280,7 +280,7 @@ const ThemeHome = () => {
                                                 <span className="price-now">Rs. {product.price}</span>
                                             )}
                                         </div>
-                                        <button onClick={() => handleBuyNow(product)} className="card-buy-btn">Buy Now</button>
+                                        <button onClick={() => handleAddToCart(product)} className="card-buy-btn">Add to Cart</button>
                                     </div>
                                 </div>
                             ))}
@@ -289,7 +289,7 @@ const ThemeHome = () => {
                 ))}
             </section>
 
-            <section className="feature-strip">
+            {/* <section className="feature-strip">
                 <div className="container">
                     <div className="feature-grid">
                         <div className="feat-box"><FaTruck className="f-icon" /> <div><h6>Fast Delivery</h6><p>Same day dispatch</p></div></div>
@@ -297,7 +297,7 @@ const ThemeHome = () => {
                         <div className="feat-box"><FaHeadset className="f-icon" /> <div><h6>24/7 Support</h6><p>Professional service</p></div></div>
                     </div>
                 </div>
-            </section>
+            </section> */}
 
             <ThemeFooter />
             <SideDrawer isOpen={sideDrawerOpen} onClose={() => setSideDrawerOpen(false)} />

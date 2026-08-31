@@ -2,8 +2,8 @@
 :root {
   --cart-charcoal: #231815;
   --cart-charcoal-deep: #150C0A;
-  --cart-primary: #F3BF4B;
-  --cart-primary-hover: #DE9E32;
+  --cart-primary: #ecc66dfb;
+  --cart-primary-hover: #ecaa4d;
   --cart-border: #E8DFD1;
   --cart-white: #ffffff;
   --cart-bg: #FAF8F5;
@@ -12,6 +12,21 @@
 .cart-page-wrapper {
   background-color: var(--cart-bg);
   min-height: 100vh;
+}
+.industrial-btn-primary {
+  background: var(--cart-primary);
+  color: var(--cart-white);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+.industrial-btn-primary:hover {
+  background: var(--cart-primary-hover);
+  transform: translateY(-2px);
+  color: var(--cart-white);
 }
 
 .cart-header-modern {
@@ -23,7 +38,7 @@
 }
 
 .navy-title {
-  color: var(--cart-charcoal);
+  color: var(--cart-primary);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: -0.5px;
@@ -40,7 +55,7 @@
 }
 
 .cart-items-card {
-  background: var(--cart-white);
+  background: transparent;
   border-radius: 15px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   padding: 25px;
@@ -52,16 +67,16 @@
   grid-template-columns: 100px 1fr 120px 120px;
   align-items: center;
   gap: 20px;
-  padding: 20px 0;
+ 
   border-bottom: 1px solid #f1f5f9;
 }
 
 .item-img-box {
-  width: 100px;
-  height: 100px;
-  background: #f8fafc;
+  width: auto;
+  height: 130px;
+  background: transparent;
   border-radius: 10px;
-  padding: 8px;
+  padding: 4px;
   border: 1px solid #edf2f7;
 }
 
@@ -130,7 +145,7 @@
 }
 
 .unit-price { font-size: 0.8rem; color: #64748b; display: block; }
-.total-price { color: var(--cart-charcoal); font-weight: 800; font-size: 1rem; margin: 0; }
+.total-price { color: var(--cart-primary); font-weight: 800; font-size: 1rem; margin: 0; }
 
 .cart-footer-actions {
   display: flex;
@@ -141,7 +156,7 @@
 }
 
 .btn-continue {
-  color: var(--cart-charcoal);
+  color: var(--cart-white);
   text-decoration: none;
   font-weight: 700;
   display: flex;
@@ -168,7 +183,9 @@
 }
 
 .order-summary-card {
-  background: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%);
+  /* background: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%); */
+  background: transparent;
+  border: 1px solid var(--cart-border);
   color: var(--cart-white);
   border-radius: 20px;
   padding: 25px;
@@ -177,7 +194,7 @@
 }
 
 .summary-title {
-  color: #f5a66b;
+  color: var(--cart-primary);
   font-weight: 800;
   margin-bottom: 25px;
   text-transform: uppercase;

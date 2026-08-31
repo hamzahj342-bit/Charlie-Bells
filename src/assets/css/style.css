@@ -25,7 +25,7 @@ body {
 }
 
 a {
-    color: #2C2C2E;
+    /* color: #2C2C2E; */
     text-decoration: none !important;
     outline: none !important;
     -webkit-transition: all .3s ease-in-out;
@@ -114,7 +114,7 @@ p {
 }
 
 a {
-    color: #222222;
+    /* color: #222222; */
     text-decoration: none;
     outline: none !important;
 }

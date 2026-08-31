@@ -1,232 +1,419 @@
-/* --- Charlie Bells PREMIUM THEME (BRAND-ALIGNED) --- */
+/* --- Charlie Bells BRAVO BELLS THEME TOKENS ---
 :root {
 
-    /* Brand Primary (Main Gold / Amber Logo Color) */
-    --brand-primary: #F3BF4B;
-    --brand-primary-hover: #DE9E32;
-    
-    /* Backgrounds & Charcoals (Dark Theme Matched to Logo Background) */
-    --brand-charcoal: #231815;       /* Card / Dark element background */
-    --brand-charcoal-deep: #150C0A;  /* Deep dark logo background color */
-    
-    /* Neutrals */
-    --brand-white: #FFFFFF;
-    --brand-muted: #A89F91;          /* Soft grey matching the gold theme */
-    --brand-bg: #FAF8F5;             /* Warm Off-White light background */
-    --brand-border: #E8DFD1;         /* Warm subtle border */
-    
-    /* Gradient Extra Variable (For Buttons and Headings) */
-    --brand-gradient: linear-gradient(135deg, #FCE380 0%, #F3BF4B 50%, #DE9E32 100%);
-    
-    /* Shadows (Gold Warm Glow) */
-    --brand-shadow: 0 8px 20px rgba(238, 202, 82, 0.4);
-    /* Filter Drop-Shadow (Gold Glow for SVGs / Icons / Images) */
-    --brand-drop-shadow: drop-shadow(0 0 12px rgba(243, 191, 75, 0.75));
-
+  --brand-primary: #FFB300;       
+  --brand-primary-hover: #FFA000;  
+  --brand-charcoal-deep: #0D0D0D;  
+  --brand-charcoal: #181818;      
+  --brand-charcoal-light: #242424; 
+  --brand-white: #FFFFFF;
+  --brand-muted: #9E9E9E;        
+  --brand-border: #333333;       
+  --brand-border-gold: rgba(255, 179, 0, 0.4);
+  --brand-gold-glow: 0 0 12px rgba(255, 179, 0, 0.25);
+  --brand-drop-shadow: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.8));
 }
 
 .ts-header {
-    width: 100%;
-    background: var(--brand-charcoal);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    box-shadow: var(--brand-shadow);
+  width: 100%;
+  background: var(--brand-charcoal-deep);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid var(--brand-border);
 }
+
+
+.ts-trust-bar {
+  background: var(--brand-primary);
+  color: #000000;
+  padding: 6px 0;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.ts-trust-bar .ts-accent-text {
+  color: #000000;
+}
+
 
 .ts-utility {
-    background: var(--brand-charcoal-deep);
-    padding: 10px 0;
-    font-size: 12px;
-    color: var(--brand-white);
-    border-bottom: 2px solid var(--brand-primary);
-    border-top: 2px solid var(--brand-primary);
+  background: var(--brand-charcoal-deep);
+  padding: 8px 0;
+  font-size: 12px;
+  color: var(--brand-muted);
+  border-bottom: 1px solid var(--brand-border);
 }
 
-.ts-u-left, .ts-auth-link {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--brand-primary);
+.ts-u-left,
+.ts-auth-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--brand-muted);
+  font-weight: 500;
+}
+
+.ts-accent-text {
+  color: var(--brand-primary);
 }
 
 .ts-auth-link {
-    color: var(--brand-primary);
-    text-decoration: none;
-    font-weight: 600;
-    position: relative;
-    padding-bottom: 2px;
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .ts-auth-link:hover {
-    color: var(--brand-primary-hover);
+  color: var(--brand-primary);
 }
 
-.ts-auth-link::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: -2px;
-    left: 0;
-    background: var(--brand-primary);
-    transition: width 0.3s ease;
-}
-
-.ts-auth-link:hover::after {
-    width: 100%;
+.ts-main-nav {
+  background: var(--brand-charcoal);
+  border-bottom: 2px solid var(--brand-primary);
 }
 
 .ts-nav-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
 }
 
-.ts-nav-left, .ts-nav-right {
-    flex: 1;
-    display: flex;
-    align-items: center;
+.ts-nav-left,
+.ts-nav-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.ts-nav-center {
+  display: flex;
+  justify-content: center;
 }
 
 .ts-nav-right {
-    justify-content: flex-end;
-    gap: 25px;
+  justify-content: flex-end;
+  gap: 20px;
 }
 
+
 .ts-desktop-links {
-    display: flex;
-    gap: 25px;
+  display: flex;
+  gap: 20px;
 }
 
 .ts-link {
-    color: var(--brand-primary);
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 13px;
-    text-transform: uppercase;
-    position: relative;
-    padding: 5px 0;
-    transition: 0.3s;
+  color: var(--brand-white);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 6px 0;
+  position: relative;
+  transition: color 0.2s ease;
 }
 
 .ts-link::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: 0;
-    left: 0;
-    background: var(--brand-primary);
-    transition: width 0.3s ease;
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background: var(--brand-primary);
+  transition: width 0.3s ease;
 }
 
-.ts-link:hover::after, .active-link::after {
-    width: 100%;
+.ts-link:hover,
+.active-link {
+  color: var(--brand-primary);
 }
 
-.ts-link:hover, .active-link {
-    color: var(--brand-primary);
+.ts-link:hover::after,
+.active-link::after {
+  width: 100%;
 }
 
-.ts-cart-btn {
-    background: var(--brand-charcoal);
-    color: var(--brand-primary);
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 800;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    border: none;
-    transition: all 0.3s ease;
-    box-shadow: var(--brand-shadow);
-    border: 1px solid var(--brand-primary);
+
+.ts-cart-btn,
+.ts-menu-toggle {
+  background: var(--brand-charcoal-light);
+  color: var(--brand-primary);
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brand-border-gold);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.ts-cart-btn:hover,
+.ts-menu-toggle:hover {
+  background: var(--brand-primary);
+  color: #000000;
+  box-shadow: var(--brand-gold-glow);
 }
 
 .ts-cart-icon-box {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
 }
 
 .ts-badge {
-    position: absolute;
-    top: -9px;
-    right: -11px;
-    min-width: 18px;
-    height: 18px;
-    padding: 0 5px;
-    border-radius: 999px;
-    background: #ffffff;
-    color: var(--brand-primary);
-    font-size: 10px;
-    font-weight: 800;
-    line-height: 18px;
-    text-align: center;
-    border: 2px solid var(--brand-primary);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-}
-
-.ts-cart-btn:hover {
-    background: var(--brand-primary-hover);
-    transform: translateY(-2px);
-    color: var(--brand-white);
+  position: absolute;
+  top: -10px;
+  right: -12px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 50%;
+  background: var(--brand-primary);
+  color: #000000;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 18px;
+  text-align: center;
+  border: 2px solid var(--brand-charcoal-deep);
 }
 
 .ts-logo {
-    height: 100px;
-    width: auto;
-    filter: var(--brand-drop-shadow);
+  height: 70px;
+  width: auto;
+  filter: var(--brand-drop-shadow);
+  transition: transform 0.2s ease;
+}
+
+.ts-logo:hover {
+  transform: scale(1.02);
+}
+
+
+@media (max-width: 768px) {
+  .ts-logo {
+    height: 55px;
+  }
+  .ts-desktop-links {
+    display: none;
+  }
+  .ts-nav-right {
+    gap: 10px;
+  }
+  .ts-cart-btn,
+  .ts-menu-toggle {
+    width: 38px;
+    height: 38px;
+  }
+} */
+
+
+
+:root {
+  --brand-gold: #ecc66dfb;
+  --brand-black: #050505;
+  --brand-charcoal: #111111;
+  --brand-dropdown-bg: #1A1A1A;
+  --brand-text-light: #F5F5F5;
+  --brand-border-dark: #2A2A2A;
+}
+
+.ts-header {
+  width: 100%;
+  background: var(--brand-black);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* Brand Banner Container */
+.ts-brand-banner {
+  /* Local image path from src/assets/images/ */
+  background: 
+    linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.55)),
+    url('../images/banner4.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--brand-border-dark);
+}
+
+.ts-logo {
+  height: 105px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Main Navigation Bar (Single Row) */
+.ts-main-navbar {
+  background: #111111;
+  border-bottom: 1px solid var(--brand-gold);
+  padding: 0 10px;
+}
+
+.ts-nav-links {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.ts-nav-item {
+  position: relative;
+}
+
+.ts-nav-link {
+  color: var(--brand-text-light);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.ts-arrow-icon {
+  font-size: 10px;
+  color: var(--brand-gold);
+}
+
+.ts-nav-link:hover,
+.active-link {
+  color: var(--brand-gold);
+}
+
+/* Dropdown Menus */
+.ts-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: var(--brand-dropdown-bg);
+  min-width: 220px;
+  list-style: none;
+  padding: 8px 0;
+  margin: 0;
+  border-top: 2px solid var(--brand-gold);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+  display: none;
+  z-index: 1050;
+}
+
+.ts-dropdown:hover .ts-dropdown-menu {
+  display: block;
+}
+
+.ts-dropdown-item {
+  display: block;
+  padding: 10px 18px;
+  color: #DDDDDD;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.ts-dropdown-item:hover {
+  background-color: #262626;
+  color: var(--brand-gold);
+  padding-left: 22px;
+}
+
+/* Actions (Search & Cart) */
+.ts-action-icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--brand-text-light);
+  font-size: 1.1rem;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.ts-action-icon-btn:hover {
+  color: var(--brand-gold);
+}
+
+.ts-cart-count-badge {
+  position: absolute;
+  top: 2px;
+  right: 0px;
+  background: var(--brand-gold);
+  color: #000000;
+  font-size: 10px;
+  font-weight: 900;
+  border-radius: 50%;
+  width: 17px;
+  height: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ts-search-input {
+  background: #1F1F1F;
+  border: 1px solid var(--brand-gold);
+  color: #FFFFFF;
+  width: 180px;
+}
+
+.ts-search-input:focus {
+  background: #1F1F1F;
+  color: #FFFFFF;
+  border-color: var(--brand-gold);
+  box-shadow: none;
 }
 
 .ts-menu-toggle {
-    background: var(--brand-charcoal);
-    color: var(--brand-primary);
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: var(--brand-shadow);
-    border: 1px solid var(--brand-primary);
+  background: transparent;
+  border: 1px solid var(--brand-gold);
+  color: var(--brand-gold);
+  padding: 6px 10px;
+  border-radius: 4px;
 }
 
-.ts-menu-toggle:hover {
-    background: var(--brand-primary-hover);
-    transform: translateY(-2px);
-    color: var(--brand-white);
+/* --- DESKTOP CENTERING & MOBILE HIDE FIXES --- */
+
+/* 1. Desktop View (>= 992px): Center Links & Keep Icons Right-Aligned */
+@media (min-width: 992px) {
+  .ts-main-navbar .container {
+    position: relative;
+    justify-content: center !important;
+  }
+
+  .ts-right-actions {
+    position: absolute;
+    right: 12px;
+  }
 }
 
-.ts-trust-bar {
-    background: var(--brand-charcoal);
-    color: var(--brand-primary);
-    padding: 10px 0;
-    text-align: center;
-    font-size: 11px;
-    font-weight: 900;
-    text-transform: uppercase;
-    border-bottom: 2px solid var(--brand-primary);
-    border-top: 2px solid var(--brand-primary);
+/* 2. Mobile View (< 992px): Completely Hide Main Navbar */
+@media (max-width: 991px) {
+  .ts-main-navbar {
+    display: none !important;
+  }
+  .ts-menu-toggle {
+  background: transparent;
+  border: 1px solid var(--brand-gold);
+  color: var(--brand-gold);
+  border-radius: 4px;
 }
-
-@media (max-width: 768px) {
-    .ts-logo { height: 80px; }
-    .ts-desktop-links { display: none; }
-    .ts-nav-right { gap: 10px; }
-    .ts-cart-btn,
-    .ts-menu-toggle {
-        width: 42px;
-        height: 42px;
-    }
 }

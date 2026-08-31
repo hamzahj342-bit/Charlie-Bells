@@ -71,7 +71,7 @@
 .hero-title {
     font-size: 3.8rem;
     font-weight: 800;
-    color: var(--ts-navy);
+    color: var(--ts-cyan);
     line-height: 1.1;
     margin-bottom: 25px;
     letter-spacing: -1px;
@@ -132,15 +132,15 @@
 /* --- Hero Image Visuals --- */
 .hero-visual-col {
     position: relative;
-    padding: 20px;
+    padding: 10px;
 }
 
 .image-frame {
-    border-radius: 40px;
+    border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.15);
     background: var(--ts-white);
-    border: 8px solid var(--ts-white);
+    border: 1px solid #111111;
 }
 
 .hero-img {
@@ -246,7 +246,7 @@
 .group-title {
     font-size: 2.2rem;
     font-weight: 800;
-    color: var(--ts-navy);
+    color: var(--ts-cyan);
     margin: 0;
     letter-spacing: -0.5px;
 }
@@ -282,8 +282,8 @@
 }
 
 .item-card {
-    background: var(--ts-white);
-    border-radius: 24px;
+    background: transparent !important;
+    border-radius: 2px !important;
     padding: 15px;
     border: 1px solid #E5E7EB;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -298,8 +298,8 @@
 
 .item-thumb {
     height: 350px;
-    background: #F8F9FA;
-    border-radius: 20px;
+    background: transparent !important;
+    border-radius: 2px !important;
     position: relative;
     overflow: hidden;
     display: flex;
@@ -453,7 +453,7 @@
 .item-name {
     font-size: 1.2rem;
     font-weight: 700;
-    color: var(--ts-navy);
+    color: var(--ts-white) !important;
     margin-bottom: 10px;
     white-space: nowrap;
     overflow: hidden;
@@ -553,10 +553,14 @@
         gap: 40px;
     }
     .hero-info-col {
-        order: 2;
+        /* order: 2; */
+        display: none !important;
     }
     .hero-visual-col {
         order: 1;
+    }
+    .hero-dots {
+        display: none;
     }
     .hero-btns {
         justify-content: center;

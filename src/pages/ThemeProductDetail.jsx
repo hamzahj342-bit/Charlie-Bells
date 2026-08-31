@@ -574,7 +574,7 @@ const ThemeProductDetail = () => {
                     <span className="original-price-tag">Rs. {product.price}</span>
                     <span className="price-tag">Rs. {product.discount_price}</span>
                     <span className="discount-badge">
-                      {Math.round(((product.price - product.discount_price) / product.price) * 100)}% OFF
+                      -{Math.round(((product.price - product.discount_price) / product.price) * 100)}%
                     </span>
                   </>
                 ) : (
@@ -585,7 +585,7 @@ const ThemeProductDetail = () => {
               <div className="spec-card mb-4">
                 <p><strong>SKU:</strong> {product.sku || 'IND-786'}</p>
                 {product.barcode && (
-                  <p><strong>Barcode:</strong> <code style={{ backgroundColor: '#f0f0f0', padding: '4px 8px', borderRadius: '4px', fontFamily: 'monospace' }}>{product.barcode}</code></p>
+                  <p><strong>Barcode:</strong> <code style={{ backgroundColor: 'transparent', color: "#ecc66dfb", borderRadius: '4px', fontFamily: 'monospace' }}>{product.barcode}</code></p>
                 )}
                 <p className="description-text">{product.description}</p>
               </div>
@@ -606,16 +606,16 @@ const ThemeProductDetail = () => {
                 </div>
               </div>
 
-              <div className="trust-grid row g-3">
+              {/* <div className="trust-grid row g-3">
                 <div className="col-6"><div className="trust-item"><FaTruck /> <span>Fast Delivery</span></div></div>
                 <div className="col-6"><div className="trust-item"><FaShieldAlt /> <span>Quality Lab Tested</span></div></div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
 
         {/* Reviews Section */}
-        <div className="row mt-5">
+        <div className="row">
           <div className="col-12">
             <div className="review-section-card">
               <h3 className="section-heading mb-4 text-center">Customer Satisfaction</h3>
@@ -654,13 +654,13 @@ const ThemeProductDetail = () => {
                                 {r.customer_name.charAt(0).toUpperCase()}
                               </div>
                               <div>
-                                <h6 className="mb-0 fw-bold text-navy">
+                                <h6 className="mb-0 fw-bold ml-2 text-white">
                                   {r.customer_name} 
                                   <span className="verified-badge-text">
                                     <FaCheckCircle className="ms-1" /> Verified Buyer
                                   </span>
                                 </h6>
-                                <small className="text-muted">Purchased recently</small>
+                                <small className="text-secondary ml-2">Purchased recently</small>
                               </div>
                             </div>
                             <div className="stars-wrapper">

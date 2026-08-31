@@ -8,6 +8,8 @@ import TopBar from '../components/TopBar';
 import ThemeFooter from '../components/ThemeFooter';
 import '../assets/css/Cart.css'; // Make sure this is the main CSS file
 
+const TAX_RATE = 0.083;
+
 const Cart = () => {
   const { 
     items, 
@@ -28,7 +30,8 @@ const Cart = () => {
   const subtotal = getCartTotal();
   const itemsCount = getCartItemsCount();
   const shippingCost = getShippingCost(subtotal, shippingMethod);
-  const total = Math.max(0, subtotal + shippingCost);
+  const tax = subtotal * TAX_RATE;
+  const total = Math.max(0, subtotal + tax + shippingCost);
 
   if (items.length === 0) {
     return (
@@ -115,7 +118,7 @@ const Cart = () => {
                 <span>Subtotal</span>
                 <span>Rs. {subtotal.toFixed(2)}</span>
               </div>
-
+ 
               <div className="summary-line vertical">
                 <span>Shipping Method</span>
                 <select 
@@ -132,6 +135,11 @@ const Cart = () => {
                 {subtotal >= freeShippingThreshold && (
                   <small className="success-text">Order qualifies for FREE shipping!</small>
                 )}
+              </div>
+
+              <div className="summary-line">
+                <span>Tax</span>
+                <span>Rs. {tax.toFixed(2)}</span>
               </div>
 
               <div className="divider-dashed"></div>

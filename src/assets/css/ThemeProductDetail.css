@@ -18,7 +18,7 @@
 
 /* --- Image Section Styling --- */
 .image-main-card {
-  background: #ffffff;
+  background: transparent;
   padding: 25px;
   border-radius: 24px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
@@ -37,7 +37,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f8fafc;
+  background: transparent;
   border-radius: 16px;
   overflow: hidden;
 }
@@ -91,15 +91,17 @@
 
 .product-main-title {
   font-weight: 800;
-  color: var(--ts-navy);
+  color: var(--ts-cyan);
   margin-bottom: 12px;
   font-size: 2.2rem;
   line-height: 1.2;
 }
 
 .star-rating-box {
-  background: var(--grad-electric);
-  color: var(--ts-navy);
+  background: transparent;
+  border: 2px solid var(--ts-cyan);
+  color: var(--ts-white);
+  margin-top: 1px;
   padding: 4px 12px;
   border-radius: 8px;
   font-weight: 700;
@@ -116,8 +118,8 @@
 }
 
 .spec-card {
-  background: var(--ts-white);
-  padding: 20px;
+  background: transparent;
+  padding: 1px;
   border-radius: 18px;
   border-left: 5px solid var(--ts-cyan);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
@@ -140,7 +142,7 @@
 .action-buttons {
   width: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 12px;
 }
 
@@ -175,15 +177,16 @@
 }
 
 .btn-add-cart {
-  background: var(--grad-electric) !important;
+  background: transparent !important;
   color: var(--ts-white) !important;
-  font-weight: 700 !important;
-  border-radius: 14px !important;
+  border: 1px solid var(--ts-white) !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
   transition: all 0.3s ease !important;
-  border: 1px solid transparent !important;
+  /* border: 1px solid transparent !important; */
   text-transform: uppercase;
   letter-spacing: 1px;
-  padding: 15px !important;
+  padding: 8px !important;
   width: 100%;
   box-shadow: 0 10px 24px rgba(243, 191, 75, 0.25);
 }
@@ -195,14 +198,14 @@
 }
 
 .btn-buy-now {
-  background: var(--ts-navy) !important;
+  background: transparent !important;
   color: var(--ts-white) !important;
-  font-weight: 700 !important;
-  border-radius: 14px !important;
-  border: none !important;
+  border: 1px solid var(--ts-white) !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
   text-transform: uppercase;
   letter-spacing: 1px;
-  padding: 15px !important;
+  padding: 8px !important;
   width: 100%;
 }
 
@@ -235,28 +238,30 @@
 }
 
 .price-tag {
-  font-size: 2rem;
+  font-size: 1.2rem;
   font-weight: 800;
   color: var(--ts-cyan);
 }
 
 .original-price-tag {
-  font-size: 1.2rem;
+  font-size: 1.0;
   color: #94a3b8;
   text-decoration: line-through;
   font-weight: 500;
 }
 
 .discount-badge {
-  background: #ef4444;
+  background: var(--grad-electric) !important;
   color: white;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 12px;
+  padding: 5px 10px;
+  border-radius: 20px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  align-self: flex-start;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(243, 191, 75, 0.3);
+  border: 2px solid white;
 }
 
 .original-price {
@@ -315,16 +320,17 @@
 
 /* --- MODERN REVIEWS SECTION --- */
 .review-section-card {
-  background: #ffffff;
-  padding: 50px 40px;
+  background: transparent;
+  padding: 40px 30px;
   border-radius: 35px;
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.04);
   margin-top: 30px;
+  border: 1px solid var(--ts-white);
 }
 
 .section-heading {
   font-weight: 800;
-  color: var(--ts-navy);
+  color: var(--ts-cyan);
   position: relative;
   padding-bottom: 15px;
 }
@@ -342,7 +348,7 @@
 }
 
 .write-review-card {
-  background: var(--ts-white);
+  background: transparent;
   padding: 30px;
   border-radius: 24px;
   border: 1px solid var(--border-color);
@@ -350,7 +356,7 @@
 
 .write-review-card h5 {
   font-weight: 700;
-  color: var(--ts-navy);
+  color: var(--ts-cyan);
   margin-bottom: 20px;
 }
 
@@ -396,7 +402,7 @@
 }
 
 .review-card-modern {
-  background: #ffffff;
+  background: transparent;
   border: 1px solid #f1f5f9;
   border-radius: 20px;
   padding: 25px;
@@ -405,7 +411,7 @@
 }
 
 .review-card-modern:hover {
-  transform: translateY(-4px);
+  transform: translateY(2px);
   box-shadow: 0 12px 20px rgba(0, 0, 0, 0.06);
   border-color: #cbd5e0;
 }
@@ -414,7 +420,7 @@
   width: 50px;
   height: 50px;
   background: var(--grad-electric);
-  color: var(--ts-navy);
+  color: var(--ts-white);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -426,7 +432,7 @@
 
 .verified-badge-text {
   font-size: 10px;
-  color: var(--ts-navy);
+  color: var(--ts-cyan);
   background: rgba(243, 191, 75, 0.16);
   padding: 3px 10px;
   border-radius: 50px;
@@ -442,9 +448,10 @@
 }
 
 .review-content-body p {
-  color: #475569;
+  color: white;
   font-size: 1rem;
   line-height: 1.6;
+  margin-left: -7px;
 }
 
 .stars-wrapper {

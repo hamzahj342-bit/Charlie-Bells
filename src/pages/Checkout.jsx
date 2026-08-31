@@ -11,6 +11,8 @@ import TopBar from '../components/TopBar';
 import ThemeFooter from '../components/ThemeFooter';
 import '../assets/css/Checkout.css';
 
+const TAX_RATE = 0.083;
+
 const Checkout = () => {
   const { websiteLogo } = useLogo();
   const {
@@ -38,7 +40,8 @@ const Checkout = () => {
 
   const subtotal = getCartTotal();
   const shipping = getShippingCost(subtotal, shippingMethod);
-  const total = subtotal + shipping;
+  const tax = subtotal * TAX_RATE;
+  const total = subtotal + tax + shipping;
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
@@ -130,6 +133,7 @@ const Checkout = () => {
         user_id: 1, 
         status: 'pending',
         subtotal,
+        tax_amount: tax,
         shipping_amount: shipping,
         total_amount: total,
         shipping_address: shippingInfo,
@@ -202,13 +206,13 @@ const Checkout = () => {
       <TopBar onMenuToggle={() => setSideDrawerOpen(true)} />
       
       <div className="container py-5">
-        <div className="d-flex justify-content-between align-items-end mb-5">
-          <div>
+        {/* <div className="d-flex justify-content-between align-items-end mb-5">
+           <div>
             <Link to="/cart" className="text-decoration-none text-muted mb-2 d-inline-block"><ArrowLeft size={16} /> Back to Cart</Link>
             <h1 className="ch-industrial-title mb-0">Secure Checkout</h1>
-          </div>
+          </div> 
           <div className="fw-bold text-muted">Step {currentStep} of 3</div>
-        </div>
+        </div> */}
 
         {/* Professional Stepper */}
         <div className="ch-stepper-container mb-5">
@@ -228,6 +232,7 @@ const Checkout = () => {
             <AnimatePresence mode="wait">
               {currentStep === 1 && (
                 <motion.div key="ship" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="ch-industrial-card">
+                  <h1 className="ch-industrial-title mb-4">Secure Checkout</h1>
                   <h3 className="ch-section-title"><MapPin size={20} className="me-2 ch-text-gold"/> Shipping Details</h3>
                   <div className="row g-3">
                     <div className="col-md-6">
@@ -244,7 +249,7 @@ const Checkout = () => {
                     </div>
                     <div className="col-md-4">
                       <label className="ch-form-label-ind">City</label>
-                      <input type="text" className="ch-form-control-ind" value={shippingInfo.city} onChange={(e) => setShippingInfo({...shippingInfo, city: e.target.value})} />
+                      <input type="text" className="ch-form-control-ind" value={shippingInfo.city} onChange={(e) => setShippingInfo({...shippingInfo, city: e.target.value})} placeholder='California'/>
                     </div>
                     <div className="col-md-4">
                       <label className="ch-form-label-ind">Phone</label>
@@ -339,8 +344,9 @@ const Checkout = () => {
               </div>
               <div className="ch-cost-breakdown">
                 <div className="ch-cost-line"><span>Subtotal</span><span>Rs. {subtotal}</span></div>
+                <div className="ch-cost-line"><span>Tax</span><span>Rs. {tax.toFixed(2)}</span></div>
                 <div className="ch-cost-line"><span>Shipping</span><span>{shipping === 0 ? 'FREE' : `Rs. ${shipping}`}</span></div>
-                <div className="ch-cost-line total"><span>Total Amount</span><span>Rs. {total}</span></div>
+                <div className="ch-cost-line total"><span>Total Amount</span><span>Rs. {total.toFixed(2)}</span></div>
               </div>
               <div className="mt-4 border-top pt-3 opacity-75">
                 <div className="d-flex align-items-center gap-2 mb-2"><Zap size={14} className="ch-text-gold" /> <small>Secure Encryption</small></div>

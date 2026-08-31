@@ -11,7 +11,7 @@
 }
 
 .fb-filter-bar {
-  background: var(--fb-white);
+  background: transparent;
   border-bottom: 1px solid var(--fb-border);
   padding: 15px 0;
   position: relative;

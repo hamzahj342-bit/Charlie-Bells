@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 :root {
-  --brand-primary: #F3BF4B;
-  --brand-primary-hover: #DE9E32;
+  --brand-primary: #ecc66dfb;
+  --brand-primary-hover: #ecaa4d;
   --brand-charcoal: #231815;
   --brand-charcoal-deep: #150C0A;
-  --brand-bg: #FAF8F5;
+  --brand-bg: #0e0d0a;
   --brand-surface: #FFFFFF;
   --brand-text: #231815;
   --brand-muted: #A89F91;
@@ -122,4 +122,35 @@ button:focus {
 .btn-outline-dark:hover {
   background: var(--brand-charcoal) !important;
   color: #fff !important;
+}
+
+
+/* Add this in src/index.css */
+html,
+body,
+#root,
+.App,
+.App > main {
+  background-color: #0e0d0a !important;
+  background-image: 
+    radial-gradient(circle at 50% 30%, rgba(255, 179, 0, 0.07) 0%, transparent 65%),
+    linear-gradient(rgba(255, 179, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 179, 0, 0.05) 1px, transparent 1px) !important;
+  background-size: 100% 100%, 35px 35px, 35px 35px !important;
+  background-attachment: fixed !important;
+  color: #F5F5F5;
+  min-height: 100vh;
+}
+
+main,
+section,
+.container,
+.container-fluid,
+.home-modern-layout,
+.ap-page-wrapper,
+.cart-page-wrapper,
+.ch-checkout-page-wrapper,
+.ct-category-page-wrapper,
+.detail-page-wrapper {
+  background-color: transparent !important;
 }

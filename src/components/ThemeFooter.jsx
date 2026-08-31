@@ -1,81 +1,40 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaHeadset, FaEnvelope, FaMapMarkerAlt, FaChevronRight, FaArrowUp, FaFacebookF, FaInstagram, FaWhatsapp } from 'react-icons/fa';
-import { useLogo } from '../context/LogoContext';
+import { FaFacebookF, FaInstagram, FaWhatsapp, FaPinterestP, FaEtsy, FaArrowUp } from 'react-icons/fa';
 import '../assets/css/Footer.css';
 
 const Footer = () => {
-  const { websiteLogo } = useLogo();
-
   const handleScrollTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <footer className="ts-footer-main">
-      <div className="container">
-        <div className="ts-footer-top-grid">
-          
-          {/* Brand Identity */}
-          <div className="ts-footer-col brand-col">
-            <img src={websiteLogo} alt="Charlie Bells" className="ts-footer-logo" />
-            <p className="ts-brand-text">
-              Your trusted source for home care chemicals, detergents, and cleaning essentials. We deliver reliable bulk supply with quality assurance and fast support.
-            </p>
-            <div className="ts-social-links">
-              <a href="#" className="ts-social-icon"><FaFacebookF /></a>
-              <a href="#" className="ts-social-icon"><FaInstagram /></a>
-              <a href="https://wa.me/923227594213" className="ts-social-icon"><FaWhatsapp /></a>
-            </div>
-          </div>
-
-          {/* Quick Links */}
-          <div className="ts-footer-col">
-            <h5 className="ts-footer-title">Quick Links</h5>
-            <ul className="ts-footer-links-list">
-              <li><Link to="/" onClick={handleScrollTop}><FaChevronRight /> Home</Link></li>
-              <li><Link to="/refund-policy" onClick={handleScrollTop}><FaChevronRight />Refund Policy</Link></li>
-              <li><Link to="/about" onClick={handleScrollTop}><FaChevronRight /> Our Story</Link></li>
-              <li><Link to="/cart" onClick={handleScrollTop}><FaChevronRight /> My Cart</Link></li>
-            </ul>
-          </div>
-
-          {/* Contact Support */}
-          <div className="ts-footer-col">
-            <h5 className="ts-footer-title">Store Support</h5>
-            <div className="ts-contact-cards">
-              <div className="ts-c-card">
-                <FaHeadset className="ts-c-icon" />
-                <div>
-                  <small>Call / WhatsApp</small>
-                  <p>+92 322 7594213</p>
-                </div>
-              </div>
-              <div className="ts-c-card">
-                <FaMapMarkerAlt className="ts-c-icon-location" />
-                <div>
-                  <small>Visit Store</small>
-                  <p>Charlie Bells, R/O Shop No.D-2490 Near Mosque Qadir, koocha Dogran Alam Market, Lahore, Pakistan</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
+    <footer className="ts-simple-footer">
+      {/* Top Section: Social Icons in Center */}
+      <div className="ts-footer-middle">
+        <div className="ts-social-bar">
+          <a href="#" className="ts-soc-btn pinterest" aria-label="Pinterest"><FaPinterestP /></a>
+          <a href="#" className="ts-soc-btn etsy" aria-label="Etsy"><FaEtsy /></a>
+          <a href="#" className="ts-soc-btn instagram" aria-label="Instagram"><FaInstagram /></a>
+          <a href="#" className="ts-soc-btn facebook" aria-label="Facebook"><FaFacebookF /></a>
+          {/* <a href="https://wa.me/923227594213" target="_blank" rel="noopener noreferrer" className="ts-soc-btn whatsapp" aria-label="WhatsApp"><FaWhatsapp /></a> */}
         </div>
 
-        {/* Bottom Bar */}
-        <div className="ts-footer-bottom-bar">
-          <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
-            <p className="ts-copyright">
-              &copy; 2026 <b>Charlie Bells</b>. All rights reserved.
-            </p>
-            <p className="ts-powered-by">
-              Developed by <span className="ts-company-highlight">CodeBase Solutions</span>
-            </p>
-            <button className="ts-scroll-top-btn" onClick={handleScrollTop}>
-              <FaArrowUp />
-            </button>
-          </div>
+        {/* Left Side Link */}
+        <div className="ts-footer-single-link">
+          <Link to="/refund-policy" onClick={handleScrollTop}>Terms and Conditions</Link>
+        </div>
+      </div>
+
+      {/* Bottom Wood Strip Banner */}
+      <div className="ts-bottom-wood-bar">
+        <div className="ts-wood-bar-content">
+          <p className="ts-copy-text">
+            &copy; 2026 <b>Charlie Bells</b> - Designed by <Link to="https://codebasesln.com" target="_blank" rel="noopener noreferrer"><span className="ts-dev-text">CodeBase Solutions</span></Link>
+          </p>
+          <button className="ts-wood-scroll-btn" onClick={handleScrollTop} aria-label="Scroll to top">
+            <FaArrowUp />
+          </button>
         </div>
       </div>
     </footer>

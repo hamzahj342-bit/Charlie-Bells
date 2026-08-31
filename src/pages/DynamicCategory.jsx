@@ -103,7 +103,7 @@ const DynamicCategory = () => {
   if (loading) return (
     <div className="ct-loader-wrapper d-flex flex-column justify-content-center align-items-center vh-100">
       <div className="spinner-border text-primary" role="status"></div>
-      <p className="mt-3 fw-bold text-navy">Loading Chemical Catalog...</p>
+      <p className="mt-3 fw-bold text-navy">Loading Bells Catalog...</p>
     </div>
   );
 
@@ -171,7 +171,7 @@ const DynamicCategory = () => {
                           <span className="price-now">Rs. {product.price}</span>
                         )}
                       </div>
-                      <button className="card-buy-btn" onClick={() => handleBuyNow(product)}>Buy Now</button>
+                      <button className="card-buy-btn" onClick={() => handleAddToCart(product)}>Add to Cart</button>
                     </div>
                     <div className="item-inline-actions">
                       <button onClick={() => handleAddToCart(product)} className="circle-btn item-inline-btn"><FaShoppingCart /></button>
