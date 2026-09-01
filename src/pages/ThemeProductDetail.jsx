@@ -209,14 +209,14 @@
 //               <div className="price-display mb-4">
 //                 {product.discount_price && product.discount_price < product.price ? (
 //                   <>
-//                     <span className="original-price-tag">Rs. {product.price}</span>
-//                     <span className="price-tag">Rs. {product.discount_price}</span>
+//                     <span className="original-price-tag">${product.price}</span>
+//                     <span className="price-tag">${product.discount_price}</span>
 //                     <span className="discount-badge">
 //                       {Math.round(((product.price - product.discount_price) / product.price) * 100)}% OFF
 //                     </span>
 //                   </>
 //                 ) : (
-//                   <span className="price-tag">Rs. {product.price}</span>
+//                   <span className="price-tag">${product.price}</span>
 //                 )}
 //               </div>
 
@@ -571,14 +571,14 @@ const ThemeProductDetail = () => {
               <div className="price-display mb-4">
                 {product.discount_price && product.discount_price < product.price ? (
                   <>
-                    <span className="original-price-tag">Rs. {product.price}</span>
-                    <span className="price-tag">Rs. {product.discount_price}</span>
+                    <span className="original-price-tag">${product.price}</span>
+                    <span className="price-tag">${product.discount_price}</span>
                     <span className="discount-badge">
                       -{Math.round(((product.price - product.discount_price) / product.price) * 100)}%
                     </span>
                   </>
                 ) : (
-                  <span className="price-tag">Rs. {product.price}</span>
+                  <span className="price-tag">${product.price}</span>
                 )}
               </div>
 

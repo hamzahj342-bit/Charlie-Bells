@@ -92,8 +92,8 @@ const Cart = () => {
                   </div>
 
                   <div className="item-price-box text-end">
-                    <span className="unit-price">Rs. {item.price}</span>
-                    <h5 className="total-price">Rs. {(item.price * item.quantity).toFixed(2)}</h5>
+                    <span className="unit-price">${item.price}</span>
+                    <h5 className="total-price">${(item.price * item.quantity).toFixed(2)}</h5>
                   </div>
                 </div>
               ))}
@@ -116,7 +116,7 @@ const Cart = () => {
               
               <div className="summary-line">
                 <span>Subtotal</span>
-                <span>Rs. {subtotal.toFixed(2)}</span>
+                <span>${subtotal.toFixed(2)}</span>
               </div>
  
               <div className="summary-line vertical">
@@ -128,7 +128,7 @@ const Cart = () => {
                 >
                   {shippingOptions.map((opt) => (
                     <option key={opt.id} value={opt.id}>
-                      {opt.label} (Rs. {opt.cost})
+                      {opt.label} (${opt.cost})
                     </option>
                   ))}
                 </select>
@@ -139,14 +139,14 @@ const Cart = () => {
 
               <div className="summary-line">
                 <span>Tax</span>
-                <span>Rs. {tax.toFixed(2)}</span>
+                <span>${tax.toFixed(2)}</span>
               </div>
 
               <div className="divider-dashed"></div>
 
               <div className="summary-line total">
                 <span>Total Amount</span>
-                <span className="total-val">Rs. {total.toFixed(2)}</span>
+                <span className="total-val">${total.toFixed(2)}</span>
               </div>
 
               <Link to="/checkout" className="checkout-btn-full">

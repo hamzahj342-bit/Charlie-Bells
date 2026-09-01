@@ -111,11 +111,11 @@ const AllProducts = () => {
           <div className="item-pricing">
             {product.discount_price && product.discount_price < product.price ? (
               <>
-                <span className="price-original">Rs. {product.price}</span>
-                <span className="price-now">Rs. {product.discount_price}</span>
+                <span className="price-original">${product.price}</span>
+                <span className="price-now">${product.discount_price}</span>
               </>
             ) : (
-              <span className="price-now">Rs. {product.price}</span>
+              <span className="price-now">${product.price}</span>
             )}
           </div>
           <button className="card-buy-btn" onClick={() => handleBuyNow(product)}>Buy Now</button>

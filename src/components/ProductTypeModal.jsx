@@ -123,9 +123,9 @@ const ProductModal = ({
                       </h6>
                       <div className="row g-3">
                         <div className="col-md-6">
-                          <label className="form-label small fw-bold text-muted mb-1">Unit Price (PKR)</label>
+                          <label className="form-label small fw-bold text-muted mb-1">Unit Price (USD)</label>
                           <div className="input-group">
-                            <span className="input-group-text border-0 bg-light small fw-bold">Rs.</span>
+                            <span className="input-group-text border-0 bg-light small fw-bold">$</span>
                             <input
                               type="number"
                               className="form-control border-0 bg-light shadow-none"
@@ -136,9 +136,9 @@ const ProductModal = ({
                           </div>
                         </div>
                         <div className="col-md-6">
-                          <label className="form-label small fw-bold text-muted mb-1">Discount Price (PKR)</label>
+                          <label className="form-label small fw-bold text-muted mb-1">Discount Price (USD)</label>
                           <div className="input-group">
-                            <span className="input-group-text border-0 bg-light small fw-bold">Rs.</span>
+                            <span className="input-group-text border-0 bg-light small fw-bold">$</span>
                             <input
                               type="number"
                               className="form-control border-0 bg-light shadow-none"

@@ -336,17 +336,17 @@ const Checkout = () => {
                     <img src={item.image_url || '/placeholder.png'} alt="" className="ch-item-thumb" />
                     <div className="flex-grow-1">
                       <p className="ch-item-name">{item.name}</p>
-                      <p className="ch-item-qty">Qty: {item.quantity} x Rs. {item.price}</p>
+                      <p className="ch-item-qty">Qty: {item.quantity} x ${item.price}</p>
                     </div>
-                    <span className="fw-bold">Rs. {item.price * item.quantity}</span>
+                    <span className="fw-bold">${item.price * item.quantity}</span>
                   </div>
                 ))}
               </div>
               <div className="ch-cost-breakdown">
-                <div className="ch-cost-line"><span>Subtotal</span><span>Rs. {subtotal}</span></div>
-                <div className="ch-cost-line"><span>Tax</span><span>Rs. {tax.toFixed(2)}</span></div>
-                <div className="ch-cost-line"><span>Shipping</span><span>{shipping === 0 ? 'FREE' : `Rs. ${shipping}`}</span></div>
-                <div className="ch-cost-line total"><span>Total Amount</span><span>Rs. {total.toFixed(2)}</span></div>
+                <div className="ch-cost-line"><span>Subtotal</span><span>${subtotal}</span></div>
+                <div className="ch-cost-line"><span>Tax</span><span>${tax.toFixed(2)}</span></div>
+                <div className="ch-cost-line"><span>Shipping</span><span>{shipping === 0 ? 'FREE' : `$ ${shipping}`}</span></div>
+                <div className="ch-cost-line total"><span>Total Amount</span><span>${total.toFixed(2)}</span></div>
               </div>
               <div className="mt-4 border-top pt-3 opacity-75">
                 <div className="d-flex align-items-center gap-2 mb-2"><Zap size={14} className="ch-text-gold" /> <small>Secure Encryption</small></div>

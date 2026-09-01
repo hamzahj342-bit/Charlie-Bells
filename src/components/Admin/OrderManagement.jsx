@@ -157,10 +157,10 @@ const OrderManagement = ({ orders, onOrdersChange }) => {
                           <span>Status:</span> <span className={`fw-bold ${selectedOrder.payment_status === 'paid' ? 'text-success' : 'text-danger'}`}>{selectedOrder.payment_status}</span>
                         </div>
                         <div className="d-flex justify-content-between mt-1">
-                          <span>Subtotal:</span> <span>Rs. {selectedOrder.subtotal}</span>
+                          <span>Subtotal:</span> <span>${selectedOrder.subtotal}</span>
                         </div>
                         <div className="d-flex justify-content-between mt-1 pt-1 border-top fw-bold text-dark">
-                          <span>Total:</span> <span>Rs. {selectedOrder.total_amount}</span>
+                          <span>Total:</span> <span>${selectedOrder.total_amount}</span>
                         </div>
                       </div>
                     </div>
@@ -209,8 +209,8 @@ const OrderManagement = ({ orders, onOrdersChange }) => {
                                   </div>
                                 </td>
                                 <td className="text-center">x{item.quantity}</td>
-                                <td className="text-end fw-bold">Rs. {item.unit_price}</td>
-                                <td className="text-end fw-bold">Rs. {item.total_price}</td>
+                                <td className="text-end fw-bold">${item.unit_price}</td>
+                                <td className="text-end fw-bold">${item.total_price}</td>
                               </tr>
                             );
                           })}

@@ -33,7 +33,7 @@
 .main-view-img {
   position: relative;
   width: 100%;
-  height: 450px;
+  height: 500px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -64,6 +64,7 @@
   border: 2px solid transparent;
   transition: 0.2s;
   background: #f8f9fa;
+  margin-right: 3px;
 }
 
 .thumb-img.active {
@@ -465,7 +466,7 @@
   .price-tag { font-size: 2rem; }
   .review-section-card { padding: 30px 20px; }
   .review-content-body { padding-left: 0; margin-top: 15px; }
-  .main-view-img { height: 300px; }
+  .main-view-img { height: auto; width: 100%; }
   
   .image-main-card {
     position: relative;
@@ -481,7 +482,7 @@
   }
   
   .thumb-img {
-    width: 60px;
-    height: 60px;
+    width: 85px;
+    height: 85px;
   }
 }

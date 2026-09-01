@@ -77,7 +77,7 @@ const Dashboard = ({ stats, products, categories }) => {
                       {product.name}
                     </h6>
                     <small className="text-muted d-block">
-                      Rs. {Number(product.price || 0).toFixed(2)}
+                      ${Number(product.price || 0).toFixed(2)}
                     </small>
                   </div>
                 </div>
