@@ -509,7 +509,7 @@ const ThemeProductDetail = () => {
     "offers": {
       "@type": "Offer",
       "url": window.location.href,
-      "priceCurrency": "PKR",
+      "priceCurrency": "USD",
       "price": product.discount_price || product.price,
       "availability": "https://schema.org/InStock"
     }

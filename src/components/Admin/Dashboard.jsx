@@ -43,7 +43,7 @@ const Dashboard = ({ stats, products, categories }) => {
             <div className="row align-items-center">
               <div className="col">
                 <h5 className="card-title mb-0 fw-semibold">Total Revenue</h5>
-                <h2 className="mb-0 fw-bold">{(stats.totalRevenue || 0).toFixed(2)}</h2>
+                <h2 className="mb-0 fw-bold">${(stats.totalRevenue || 0).toFixed(2)}</h2>
               </div>
               <div className="col-auto">
                 <DollarSign size={32} />

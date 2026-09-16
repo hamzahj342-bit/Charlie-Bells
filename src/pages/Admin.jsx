@@ -10,11 +10,13 @@ import WebsiteSettings from '../components/Admin/WebsiteSettings';
 import OrderManagement from '../components/Admin/OrderManagement';
 import Dashboard from '../components/Admin/Dashboard';
 import Products from '../components/Admin/ProductManagement';
+import PaymentAudits from '../components/Admin/PaymentAudits';
+import { isSuperAdmin } from '../utils/roles';
 
 import { 
   LayoutDashboard, Package, Tags, Truck, 
   Settings, Menu, LogOut, Store, 
-  Activity, Search, Trophy, Bell, ClipboardList
+  Activity, Search, Trophy, Bell, ClipboardList, ShieldCheck
 } from 'lucide-react';
 
 const Admin = () => {
@@ -40,11 +42,14 @@ const Admin = () => {
     stock_quantity: '', image_url: '', images: [], status: 'active', barcode: ''
   });
 
+  const superAdmin = isSuperAdmin(user);
+
   const sidebarItems = [
     { id: 'dashboard', name: 'Analytics Hub', icon: LayoutDashboard },
     { id: 'products', name: 'Chemical Inventory', icon: Package }, 
     { id: 'categories', name: 'Categories', icon: Tags },
     { id: 'orders', name: 'Orders', icon: Truck },
+    ...(superAdmin ? [{ id: 'payment-audits', name: 'Payment Audit', icon: ShieldCheck }] : []),
     { id: 'website-settings', name: 'Settings', icon: Settings },
   ];
 
@@ -213,8 +218,12 @@ const Admin = () => {
                 <div className="vr bg-white opacity-25 mx-2" style={{ height: '30px' }}></div>
                 <div className="d-flex align-items-center gap-3 ps-2">
                   <div className="text-end d-none d-sm-block">
-                    <p className="text-white mb-0 fw-bold" style={{ fontSize: '0.85rem' }}>Administrator</p>
-                    <p className="text-primary mb-0 fw-bold" style={{ fontSize: '0.65rem' }}>SUPER USER</p>
+                    <p className="text-white mb-0 fw-bold" style={{ fontSize: '0.85rem' }}>
+                      {`${user?.first_name || ''} ${user?.last_name || ''}`.trim() || 'Administrator'}
+                    </p>
+                    <p className="text-primary mb-0 fw-bold" style={{ fontSize: '0.65rem' }}>
+                      {superAdmin ? 'SUPER ADMIN' : 'ADMIN'}
+                    </p>
                   </div>
                   <button onClick={logout} className="btn btn-danger d-flex align-items-center gap-2 px-3 py-2 rounded-3 shadow-sm border-0 fw-bold" style={{ fontSize: '0.8rem' }}>
                     <LogOut size={16} /> <span className="d-none d-lg-inline">TERMINATE SESSION</span>
@@ -279,6 +288,7 @@ const Admin = () => {
                 )}
                 {activeTab === 'categories' && <CategoryManagement categories={categories} onCategoriesChange={() => {}} />}
                 {activeTab === 'orders' && <OrderManagement orders={orders} onOrdersChange={() => {}} />}
+                {activeTab === 'payment-audits' && superAdmin && <PaymentAudits />}
                 {activeTab === 'website-settings' && <WebsiteSettings />}
               </div>
             </div>

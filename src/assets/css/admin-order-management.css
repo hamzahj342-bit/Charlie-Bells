@@ -1,0 +1,207 @@
+/* Same fix as Payment Audit: dark storefront body color (#F5F5F5) bleeds into
+   Bootstrap tables unless we scope readable colors onto this light panel. */
+.om-panel {
+  color: #1f2937;
+}
+
+.om-panel .om-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 1rem;
+  padding: 1rem 1.15rem;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}
+
+.om-panel .om-title {
+  margin: 0;
+  color: #0f172a;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.om-panel .om-total {
+  color: #475569;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.om-panel .om-card {
+  border: 0;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+.om-panel .table {
+  --bs-table-color: #1f2937;
+  margin-bottom: 0;
+  color: #1f2937;
+}
+
+.om-panel .table > thead th {
+  color: #0f172a;
+  background: #f1f5f9;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.om-panel .table td {
+  color: #1f2937;
+  border-color: #e9eef5;
+  vertical-align: middle;
+}
+
+.om-panel .om-order-id {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.om-panel .om-order-date,
+.om-panel .om-customer-phone {
+  color: #64748b;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.om-panel .om-customer-name {
+  color: #1f2937;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.om-panel .om-amount {
+  color: #0f172a;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.om-panel .om-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.om-panel .om-view-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid #d7dee8;
+  background: #f8fafc;
+  color: #f26522;
+}
+
+.om-panel .om-view-btn:hover {
+  background: #fff7ed;
+  border-color: #f26522;
+  color: #ea580c;
+}
+
+.om-panel .text-muted {
+  color: #64748b !important;
+}
+
+.om-panel small {
+  color: #64748b;
+}
+
+.om-panel strong {
+  color: #0f172a;
+}
+
+/* Modal sits outside typical cascade; keep it readable too. */
+.om-modal .modal-content {
+  color: #1f2937;
+}
+
+.om-modal .modal-header h5,
+.om-modal .modal-body h6 {
+  color: #0f172a;
+}
+
+.om-modal .om-info-box {
+  color: #1f2937;
+}
+
+.om-modal .om-info-box strong {
+  color: #0f172a;
+}
+
+.om-modal .om-label {
+  color: #475569;
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+.om-modal .om-shipping-lines,
+.om-modal .om-payment-lines {
+  font-size: 0.92rem;
+  color: #1f2937;
+  line-height: 1.55;
+}
+
+.om-modal .om-method-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: #111827;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.om-modal .om-breakdown {
+  color: #1f2937;
+}
+
+.om-modal .om-total-line {
+  color: #0f172a;
+  font-size: 1rem;
+}
+
+.om-modal .om-info-box .text-muted,
+.om-modal .text-muted {
+  color: #64748b !important;
+}
+
+.om-modal .table {
+  --bs-table-color: #1f2937;
+  color: #1f2937;
+}
+
+.om-modal .table > thead th {
+  color: #0f172a;
+  background: #f1f5f9;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.om-modal .table td {
+  color: #1f2937;
+}
+
+.om-modal code {
+  background: #e8edf5;
+  color: #0f172a;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}

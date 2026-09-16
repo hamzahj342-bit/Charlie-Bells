@@ -101,7 +101,7 @@ const Products = ({
                           </span>
                         </td>
                         <td className="text-center fw-medium text-dark">
-                          Rs. {Number(product.price || 0).toLocaleString()}
+                          ${Number(product.price || 0).toFixed(2)}
                         </td>
                         <td className="text-center">
                           <div className="d-flex flex-column align-items-center">

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLogo } from '../context/LogoContext';
+import { isStaff } from '../utils/roles';
 import toast from 'react-hot-toast';
 import { Mail, Lock, Eye, EyeOff, ShoppingBag, Loader2 } from 'lucide-react';
 import '../assets/css/login-styles.css';
@@ -37,7 +38,7 @@ const Login = () => {
       toast.success('Welcome back!');
       
       // Role-based navigation logic
-      if (response.user?.role === 'admin') {
+      if (isStaff(response.user)) {
         navigate('/admin');
       } else {
         navigate('/'); // Customer returns to store

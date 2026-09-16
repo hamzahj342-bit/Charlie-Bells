@@ -3,11 +3,10 @@ import { createContext, useContext, useReducer, useEffect } from 'react';
 const CartContext = createContext();
 
 const SHIPPING_OPTIONS = [
-  { id: 'standard', label: 'Standard Delivery', cost: 250 },
-  // { id: 'express', label: 'Express Delivery', cost: 500 },
+  { id: 'standard', label: 'Standard Delivery', cost: 10 },
 ];
 
-const FREE_SHIPPING_THRESHOLD = 10000;
+const FREE_SHIPPING_THRESHOLD = 100;
 
 const cartReducer = (state, action) => {
   switch (action.type) {

@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLogo } from '../context/LogoContext';
+import { isStaff } from '../utils/roles';
 import { useState, useEffect } from 'react';
 import { themeApi } from '../services/themeApi';
 import '../assets/css/SideDrawer.css'; // Make sure to create this file
@@ -94,7 +95,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
               {/* Account Section */}
               <div className="drawer-section">
                 <label className="section-label">Account & Settings</label>
-                {user?.role === 'admin' && (
+                {isStaff(user) && (
                   <Link to="/admin" className="drawer-link admin-link" onClick={onClose}>
                     <LayoutDashboard className="nav-icon" /> Admin Dashboard
                   </Link>

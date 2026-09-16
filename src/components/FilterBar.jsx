@@ -201,7 +201,7 @@ const FilterBar = ({
                 <label className="fb-filter-label">Price Range</label>
                 <div className="fb-price-inputs">
                   <div className="fb-price-field">
-                    <span className="fb-price-prefix">Rs.</span>
+                    <span className="fb-price-prefix">$</span>
                     <input
                       type="number"
                       placeholder="Min"
@@ -211,7 +211,7 @@ const FilterBar = ({
                   </div>
                   <span className="fb-price-separator">-</span>
                   <div className="fb-price-field">
-                    <span className="fb-price-prefix">Rs.</span>
+                    <span className="fb-price-prefix">$</span>
                     <input
                       type="number"
                       placeholder="Max"
@@ -228,27 +228,27 @@ const FilterBar = ({
                 <div className="fb-price-presets">
                   <button 
                     className="fb-preset-btn"
-                    onClick={() => setTempPriceRange({ min: '', max: '1000' })}
+                    onClick={() => setTempPriceRange({ min: '', max: '25' })}
                   >
-                    Under Rs. 1000
+                    Under $25
                   </button>
                   <button 
                     className="fb-preset-btn"
-                    onClick={() => setTempPriceRange({ min: '1000', max: '5000' })}
+                    onClick={() => setTempPriceRange({ min: '25', max: '50' })}
                   >
-                    Rs. 1000 - 5000
+                    $25 - $50
                   </button>
                   <button 
                     className="fb-preset-btn"
-                    onClick={() => setTempPriceRange({ min: '5000', max: '10000' })}
+                    onClick={() => setTempPriceRange({ min: '50', max: '100' })}
                   >
-                    Rs. 5000 - 10000
+                    $50 - $100
                   </button>
                   <button 
                     className="fb-preset-btn"
-                    onClick={() => setTempPriceRange({ min: '10000', max: '' })}
+                    onClick={() => setTempPriceRange({ min: '100', max: '' })}
                   >
-                    Above Rs. 10000
+                    Above $100
                   </button>
                 </div>
               </div>

@@ -204,6 +204,21 @@ export const themeApi = {
     return response.data;
   },
 
+  createPaymentIntent: async (payload) => {
+    const response = await api.post('/payments/create-intent', payload);
+    return response.data;
+  },
+
+  logPaymentAttempt: async (payload) => {
+    const response = await api.post('/payments/attempts', payload);
+    return response.data;
+  },
+
+  getPaymentAudits: async (params = {}) => {
+    const response = await api.get('/payments/audits', { params });
+    return response.data;
+  },
+
   getOrders: async (userId) => {
     const response = await api.get(`/orders/user/${userId}`);
     return response.data;
