@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Block private / transactional surfaces from answer & search engines
+Disallow: /admin
+Disallow: /checkout
+Disallow: /login
+Disallow: /register
+Disallow: /change-password
+Disallow: /cart
+
+Sitemap: https://charlie-bells.com/sitemap.xml

@@ -13,7 +13,6 @@ import TopBar from '../components/TopBar';
 import ThemeFooter from '../components/ThemeFooter';
 import '../assets/css/Checkout.css';
 
-const TAX_RATE = 0.083;
 const PENDING_ORDER_KEY = 'pendingStripeOrder';
 // After this many failures we nudge the customer towards another card/support.
 const RETRY_HINT_AFTER = 3;
@@ -47,7 +46,9 @@ const Checkout = () => {
     shippingMethod,
     getShippingCost,
     getCartTotal,
-    clearCart
+    clearCart,
+    taxRate,
+    taxRatePercent,
   } = useCart();
   
   const navigate = useNavigate();
@@ -82,7 +83,7 @@ const Checkout = () => {
   
   const subtotal = getCartTotal();
   const shipping = getShippingCost(subtotal, shippingMethod);
-  const tax = subtotal * TAX_RATE;
+  const tax = subtotal * (taxRate || 0);
   const total = subtotal + tax + shipping;
   const cartFingerprint = useMemo(
     () => items.map((item) => `${item.id}:${item.quantity}`).join('|'),
@@ -648,7 +649,7 @@ const Checkout = () => {
               </div>
               <div className="ch-cost-breakdown">
                 <div className="ch-cost-line"><span>Subtotal</span><span>${subtotal.toFixed(2)}</span></div>
-                <div className="ch-cost-line"><span>Tax</span><span>${tax.toFixed(2)}</span></div>
+                <div className="ch-cost-line"><span>Tax ({Number(taxRatePercent || 0)}%)</span><span>${tax.toFixed(2)}</span></div>
                 <div className="ch-cost-line"><span>Shipping</span><span>{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span></div>
                 <div className="ch-cost-line total"><span>Total Amount</span><span>${total.toFixed(2)}</span></div>
               </div>

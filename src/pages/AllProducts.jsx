@@ -9,6 +9,7 @@ import TopBar from '../components/TopBar';
 import ThemeFooter from '../components/ThemeFooter';
 import FilterBar from '../components/FilterBar';
 import { useCart } from '../context/CartContext';
+import { productPath, setPageSeo } from '../utils/seo';
 import '../assets/css/AllProducts.css';
 
 const AllProducts = () => {
@@ -18,6 +19,14 @@ const AllProducts = () => {
   
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setPageSeo({
+      title: 'Shop All Products',
+      description: 'Browse the full Charlie Bells catalog — decorative bells, apparel accents, and American-made home collections.',
+      path: '/all-products',
+    });
+  }, []);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('created_at');
   const [sideDrawerOpen, setSideDrawerOpen] = useState(false);
@@ -88,7 +97,7 @@ const AllProducts = () => {
       whileHover={{ y: viewMode === 'grid' ? -12 : 0 }}
       className={`item-card ${viewMode === 'list' ? 'list-card' : ''}`}
     >
-      <div className="item-thumb" onClick={() => navigate(`/product/${product.barcode || product.id}`)}>
+      <div className="item-thumb" onClick={() => navigate(productPath(product))}>
         <img 
           src={product.images?.[0] || product.image_url || '/placeholder.png'} 
           alt={product.name} 
@@ -101,7 +110,7 @@ const AllProducts = () => {
         )}
         <div className="item-overlay">
           <button onClick={(e) => { e.stopPropagation(); handleAddToCart(product); }} className="circle-btn"><ShoppingCart /></button>
-          <button onClick={() => navigate(`/product/${product.barcode || product.id}`)} className="circle-btn"><ArrowRight /></button>
+          <button onClick={() => navigate(productPath(product))} className="circle-btn"><ArrowRight /></button>
         </div>
       </div>
       
@@ -122,7 +131,7 @@ const AllProducts = () => {
         </div>
         <div className="item-inline-actions">
           <button onClick={(e) => { e.stopPropagation(); handleAddToCart(product); }} className="circle-btn item-inline-btn"><ShoppingCart /></button>
-          <button onClick={() => navigate(`/product/${product.barcode || product.id}`)} className="circle-btn item-inline-btn"><ArrowRight /></button>
+          <button onClick={() => navigate(productPath(product))} className="circle-btn item-inline-btn"><ArrowRight /></button>
         </div>
       </div>
     </motion.div>

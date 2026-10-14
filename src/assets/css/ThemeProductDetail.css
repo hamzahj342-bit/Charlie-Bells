@@ -119,17 +119,64 @@
 }
 
 .spec-card {
-  background: transparent;
-  padding: 1px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 20px;
   border-radius: 18px;
   border-left: 5px solid var(--ts-cyan);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  box-shadow: none;
+}
+
+.spec-card .text-navy,
+.spec-card #product-specs-heading {
+  color: #f5f0e6 !important;
+}
+
+.spec-card .w-35 {
+  width: 35%;
+  min-width: 120px;
+}
+
+.spec-card .spec-table {
+  margin-bottom: 1rem;
+  color: #f5f0e6;
+  --bs-table-bg: transparent;
+  --bs-table-color: #f5f0e6;
+  --bs-table-border-color: rgba(236, 198, 109, 0.35);
+  border-color: rgba(236, 198, 109, 0.35);
+}
+
+.spec-card .spec-table > :not(caption) > * > * {
+  border-color: rgba(236, 198, 109, 0.35);
+  background-color: transparent;
+}
+
+.spec-card .spec-table .spec-label,
+.spec-card .spec-table .spec-value {
+  vertical-align: middle;
+  padding: 0.65rem 0.85rem;
+  color: #f5f0e6 !important;
+  background-color: transparent !important;
+}
+
+.spec-card .spec-table .spec-label {
+  background-color: rgba(236, 198, 109, 0.12) !important;
+  color: #f5f0e6 !important;
+  font-weight: 700;
+}
+
+.spec-card .spec-gtin {
+  background: transparent !important;
+  color: var(--brand-primary, #ecc66d) !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.95em;
+  padding: 0;
 }
 
 .description-text {
-  color: var(--ts-text-gray);
+  color: var(--brand-muted, #A89F91) !important;
   line-height: 1.7;
   font-size: 1rem;
+  margin-bottom: 0;
 }
 
 /* --- Action Buttons --- */

@@ -8,6 +8,7 @@ import SideDrawer from '../components/SideDrawer';
 import ThemeFooter from '../components/ThemeFooter';
 import TopBar from '../components/TopBar';
 import FilterBar from '../components/FilterBar';
+import { productPath, setPageSeo } from '../utils/seo';
 import './DynamicCategory.css';
 
 const DynamicCategory = () => {
@@ -23,6 +24,15 @@ const DynamicCategory = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [sideDrawerOpen, setSideDrawerOpen] = useState(false);
   const [viewMode, setViewMode] = useState('grid');
+
+  useEffect(() => {
+    if (!category) return;
+    setPageSeo({
+      title: category.name,
+      description: category.description || `Shop ${category.name} at Charlie Bells — American-made decorative bells and home accents.`,
+      path: `/category/${categorySlug}`,
+    });
+  }, [category, categorySlug]);
   const [sortBy, setSortBy] = useState('created_at');
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
@@ -141,7 +151,7 @@ const DynamicCategory = () => {
           ) : (
             filteredProducts.map((product) => (
                 <div key={product.id} className={`item-card ${viewMode === 'list' ? 'list-card' : ''}`}>
-                  <div className="item-thumb" onClick={() => navigate(`/product/${product.barcode || product.id}`)}>
+                  <div className="item-thumb" onClick={() => navigate(productPath(product))}>
                     <img 
                       src={product.images?.[0] || product.image_url || '/placeholder.png'} 
                       alt={product.name} 
@@ -154,7 +164,7 @@ const DynamicCategory = () => {
                     )}
                     <div className="item-overlay">
                       <button onClick={() => handleAddToCart(product)} className="circle-btn"><FaShoppingCart /></button>
-                      <button onClick={() => navigate(`/product/${product.barcode || product.id}`)} className="circle-btn"><FaSearch /></button>
+                      <button onClick={() => navigate(productPath(product))} className="circle-btn"><FaSearch /></button>
                     </div>
                   </div>
                   
@@ -175,7 +185,7 @@ const DynamicCategory = () => {
                     </div>
                     <div className="item-inline-actions">
                       <button onClick={() => handleAddToCart(product)} className="circle-btn item-inline-btn"><FaShoppingCart /></button>
-                      <button onClick={() => navigate(`/product/${product.barcode || product.id}`)} className="circle-btn item-inline-btn"><FaSearch /></button>
+                      <button onClick={() => navigate(productPath(product))} className="circle-btn item-inline-btn"><FaSearch /></button>
                     </div>
                   </div>
                 </div>

@@ -230,6 +230,21 @@ export const themeApi = {
     return response.data;
   },
 
+  getOrdersReport: async (params = {}) => {
+    const response = await api.get('/orders/report', { params });
+    return response.data;
+  },
+
+  getShippingSettings: async () => {
+    const response = await api.get('/shipping');
+    return response.data;
+  },
+
+  updateShippingSettings: async (payload) => {
+    const response = await api.put('/shipping', payload);
+    return response.data;
+  },
+
   updateOrderStatus: async (orderId, statusData) => {
     const response = await api.put(`/orders/${orderId}/status`, statusData);
     return response.data;

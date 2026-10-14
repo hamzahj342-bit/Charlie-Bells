@@ -47,7 +47,7 @@ function App() {
                     <Route path="/about" element={<About />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/all-products" element={<AllProducts />} />
-                    <Route path="/product/:barcode" element={<ThemeProductDetail />} />
+                    <Route path="/product/:slug" element={<ThemeProductDetail />} />
                     {/* <Route path="/product-detail/:id" element={<ProductDetail />} /> */}
                     <Route path="/category/:categorySlug" element={<DynamicCategory />} />
                     <Route path="/:categorySlug" element={<DynamicCategory />} />

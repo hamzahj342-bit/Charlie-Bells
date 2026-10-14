@@ -360,10 +360,19 @@ import { useCart } from '../context/CartContext';
 import { useLogo } from '../context/LogoContext';
 import TopBar from '../components/TopBar';
 import ThemeFooter from '../components/ThemeFooter';
+import {
+  productPath,
+  productPathSlug,
+  setPageSeo,
+  injectJsonLd,
+  removeJsonLd,
+  absoluteUrl,
+  SITE_NAME,
+} from '../utils/seo';
 import '../assets/css/ThemeProductDetail.css';
 
 const ThemeProductDetail = () => {
-  const { barcode } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const [product, setProduct] = useState(null);
@@ -382,7 +391,7 @@ const ThemeProductDetail = () => {
   useEffect(() => {
     fetchProduct();
     fetchSizes();
-  }, [barcode]);
+  }, [slug]);
 
   const fetchSizes = async () => {
     try {
@@ -401,15 +410,19 @@ const ThemeProductDetail = () => {
   const fetchProduct = async () => {
     try {
       setLoading(true);
-      const productData = await themeApi.getProductById(barcode);
+      const productData = await themeApi.getProductById(slug);
       setProduct(productData);
 
-      // Set selected image to first image if available
+      // Canonicalize barcode/id URLs to the SEO name slug
+      const canonicalSlug = productPathSlug(productData);
+      if (canonicalSlug && slug !== canonicalSlug) {
+        navigate(productPath(productData), { replace: true });
+      }
+
       if (productData?.images && productData.images.length > 0) {
         setSelectedImage(0);
       }
 
-      // Fetch reviews using the actual numeric product id when available
       try {
         if (productData && productData.id) {
           setReviewsLoading(true);
@@ -427,6 +440,120 @@ const ThemeProductDetail = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!product) return;
+
+    const description = (product.description || `${product.name} from ${SITE_NAME}. American made decorative bells and home accents.`)
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 160);
+
+    const path = productPath(product);
+    const image = (product.images && product.images[0]) || product.image_url;
+
+    setPageSeo({
+      title: product.name,
+      description,
+      path,
+      image,
+      type: 'product',
+    });
+
+    const stockQty = Number(product.stock_quantity);
+    const inStock = Number.isFinite(stockQty) ? stockQty > 0 : true;
+    const categoryName =
+      product.category_relation?.name || product.category || 'Decorative Bells';
+    const skuValue = product.sku || product.barcode || `SKU-${product.id}`;
+
+    const productSchema = {
+      '@context': 'https://schema.org/',
+      '@type': 'Product',
+      name: product.name,
+      image: product.images?.length ? product.images : [product.image_url].filter(Boolean),
+      description,
+      sku: skuValue,
+      mpn: skuValue,
+      ...(product.barcode && { gtin13: String(product.barcode) }),
+      category: categoryName,
+      brand: { '@type': 'Brand', name: SITE_NAME },
+      url: absoluteUrl(path),
+      additionalProperty: [
+        { '@type': 'PropertyValue', name: 'Brand', value: SITE_NAME },
+        { '@type': 'PropertyValue', name: 'Barcode (GTIN)', value: product.barcode || 'N/A' },
+        { '@type': 'PropertyValue', name: 'SKU', value: skuValue },
+        { '@type': 'PropertyValue', name: 'Category', value: categoryName },
+        { '@type': 'PropertyValue', name: 'Availability', value: inStock ? 'In Stock' : 'Out of Stock' },
+        ...(Number.isFinite(stockQty)
+          ? [{ '@type': 'PropertyValue', name: 'Stock Quantity', value: String(stockQty) }]
+          : []),
+      ],
+      offers: {
+        '@type': 'Offer',
+        url: absoluteUrl(path),
+        priceCurrency: 'USD',
+        price: String(product.discount_price || product.price),
+        itemCondition: 'https://schema.org/NewCondition',
+        availability: inStock
+          ? 'https://schema.org/InStock'
+          : 'https://schema.org/OutOfStock',
+        seller: { '@type': 'Organization', name: SITE_NAME },
+      },
+    };
+
+    // AEO: FAQ block helps answer engines summarize product intent
+    const faqSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: `What is ${product.name}?`,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: description || `${product.name} is sold by ${SITE_NAME}.`,
+          },
+        },
+        {
+          '@type': 'Question',
+          name: `How much does ${product.name} cost?`,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: `${product.name} is priced at $${Number(product.discount_price || product.price).toFixed(2)} USD on charlie-bells.com.`,
+          },
+        },
+        {
+          '@type': 'Question',
+          name: `Where can I buy ${product.name}?`,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: `You can buy ${product.name} online at ${absoluteUrl(path)}.`,
+          },
+        },
+      ],
+    };
+
+    const breadcrumbSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: absoluteUrl('/') },
+        { '@type': 'ListItem', position: 2, name: 'Shop', item: absoluteUrl('/all-products') },
+        { '@type': 'ListItem', position: 3, name: product.name, item: absoluteUrl(path) },
+      ],
+    };
+
+    injectJsonLd('seo-product-jsonld', productSchema);
+    injectJsonLd('seo-faq-jsonld', faqSchema);
+    injectJsonLd('seo-breadcrumb-jsonld', breadcrumbSchema);
+
+    return () => {
+      removeJsonLd('seo-product-jsonld');
+      removeJsonLd('seo-faq-jsonld');
+      removeJsonLd('seo-breadcrumb-jsonld');
+    };
+  }, [product]);
 
   const handleAddToCart = () => {
     addToCart({ 
@@ -492,39 +619,18 @@ const ThemeProductDetail = () => {
     </div>
   );
 
-  // Generate Structured Data (JSON-LD Schema) for Google Search Console & Indexing
-  const schemaMarkup = product ? {
-    "@context": "https://schema.org/",
-    "@type": "Product",
-    "name": product.name,
-    "image": product.images && product.images.length > 0 ? product.images : [product.image_url],
-    "description": product.description,
-    "sku": product.sku || `SKU-${product.id}`,
-    // Map barcode to gtin13 if available for accurate barcode lookup on Google
-    ...(product.barcode && { "gtin13": product.barcode }),
-    "brand": {
-      "@type": "Brand",
-      "name": "Grace Plus"
-    },
-    "offers": {
-      "@type": "Offer",
-      "url": window.location.href,
-      "priceCurrency": "USD",
-      "price": product.discount_price || product.price,
-      "availability": "https://schema.org/InStock"
-    }
-  } : null;
+  if (!product) return null;
+
+  const stockQty = Number(product.stock_quantity);
+  const isAvailable = Number.isFinite(stockQty)
+    ? stockQty > 0
+    : (product.stock !== undefined ? Number(product.stock) > 0 : true);
+  const categoryName =
+    product.category_relation?.name || product.category || 'Decorative Bells';
+  const skuValue = product.sku || product.barcode || `SKU-${product.id}`;
 
   return (
     <div className="detail-page-wrapper">
-      {/* Dynamic Injection of JSON-LD Schema Markup */}
-      {schemaMarkup && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup) }}
-        />
-      )}
-
       <header className="modern-header"><TopBar onMenuToggle={() => setSideDrawerOpen(true)} /></header>
       <SideDrawer isOpen={sideDrawerOpen} onClose={() => setSideDrawerOpen(false)} />
 
@@ -551,7 +657,7 @@ const ThemeProductDetail = () => {
           {/* Details Section */}
           <div className="col-lg-6">
             <div className="product-content-box">
-              <span className="category-badge">Bike Bells & Horns</span>
+              <span className="category-badge">{categoryName}</span>
               <h1 className="product-main-title">{product.name}</h1>
               
               <div className="d-flex align-items-center gap-2 mb-3">
@@ -568,7 +674,7 @@ const ThemeProductDetail = () => {
                 <span className="text-muted">({reviews.length} Verified Reviews)</span>
               </div>
 
-              <div className="price-display mb-4">
+              <div className="price-display mb-3">
                 {product.discount_price && product.discount_price < product.price ? (
                   <>
                     <span className="original-price-tag">${product.price}</span>
@@ -582,13 +688,53 @@ const ThemeProductDetail = () => {
                 )}
               </div>
 
-              <div className="spec-card mb-4">
-                <p><strong>SKU:</strong> {product.sku || 'IND-786'}</p>
-                {product.barcode && (
-                  <p><strong>Barcode:</strong> <code style={{ backgroundColor: 'transparent', color: "#ecc66dfb", borderRadius: '4px', fontFamily: 'monospace' }}>{product.barcode}</code></p>
-                )}
-                <p className="description-text">{product.description}</p>
-              </div>
+              <p
+                className={`fw-semibold mb-3 ${isAvailable ? 'text-success' : 'text-danger'}`}
+                data-stock={isAvailable ? 'in-stock' : 'out-of-stock'}
+                data-stock-quantity={Number.isFinite(stockQty) ? String(stockQty) : ''}
+              >
+                {isAvailable ? 'In Stock — Ready to Ship' : 'Currently Out of Stock'}
+              </p>
+
+              {/* GEO / AEO: structured specs table for crawlers + answer engines */}
+              <section className="spec-card mb-4" aria-labelledby="product-specs-heading">
+                <h2 id="product-specs-heading" className="h5 text-navy fw-bold mb-3">
+                  Product Overview &amp; Specifications
+                </h2>
+                <table className="table table-bordered text-start small mb-3 spec-table">
+                  <tbody>
+                    <tr>
+                      <th scope="row" className="spec-label w-35">Brand</th>
+                      <td className="spec-value">{SITE_NAME}</td>
+                    </tr>
+                    {/* <tr>
+                      <th scope="row" className="spec-label">Barcode (GTIN)</th>
+                      <td className="spec-value">
+                        <code className="spec-gtin">{product.barcode || 'N/A'}</code>
+                      </td>
+                    </tr> */}
+                    <tr>
+                      <th scope="row" className="spec-label">SKU</th>
+                      <td className="spec-value">{skuValue}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" className="spec-label">Category</th>
+                      <td className="spec-value">{categoryName}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" className="spec-label">Availability</th>
+                      <td className="spec-value">
+                        {isAvailable
+                          ? `In Stock (Ready to Ship)${Number.isFinite(stockQty) && stockQty > 0 ? ` — ${stockQty} units` : ''}`
+                          : 'Out of Stock'}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                {product.description ? (
+                  <p className="description-text">{product.description}</p>
+                ) : null}
+              </section>
 
               <div className="action-row mb-5">
                 <div className="qty-input">

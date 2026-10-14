@@ -13,6 +13,7 @@ import { useAuth } from '../context/AuthContext';
 import SideDrawer from '../components/SideDrawer';
 import TopBar from '../components/TopBar'; 
 import ThemeFooter from '../components/ThemeFooter';
+import { productPath, setPageSeo, injectJsonLd, removeJsonLd, SITE_NAME, SITE_URL, SITE_TAGLINE } from '../utils/seo';
 
 import '../assets/css/ThemeHome.css';
 
@@ -26,6 +27,40 @@ const ThemeHome = () => {
     const [sideDrawerOpen, setSideDrawerOpen] = useState(false);
     const [currentSlide, setCurrentSlide] = useState(0);
     const [heroSlides, setHeroSlides] = useState([]);
+
+    useEffect(() => {
+        setPageSeo({
+            title: `${SITE_NAME} | ${SITE_TAGLINE}`,
+            description: 'Shop American-made decorative bells, home accents, and Charlie Bells collections. Secure checkout with fast US shipping.',
+            path: '/',
+        });
+
+        injectJsonLd('seo-org-jsonld', {
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: SITE_NAME,
+            url: SITE_URL,
+            logo: `${SITE_URL}/src/assets/images/faviconbells.png`,
+            description: SITE_TAGLINE,
+        });
+
+        injectJsonLd('seo-website-jsonld', {
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            name: SITE_NAME,
+            url: SITE_URL,
+            potentialAction: {
+                '@type': 'SearchAction',
+                target: `${SITE_URL}/all-products?search={search_term_string}`,
+                'query-input': 'required name=search_term_string',
+            },
+        });
+
+        return () => {
+            removeJsonLd('seo-org-jsonld');
+            removeJsonLd('seo-website-jsonld');
+        };
+    }, []);
 
     // Fetch hero slides from website settings
     useEffect(() => {
@@ -264,7 +299,7 @@ const ThemeHome = () => {
                                         )}
                                         <div className="item-overlay">
                                             <button onClick={() => handleAddToCart(product)} className="circle-btn"><FaShoppingCart /></button>
-                                            <button onClick={() => navigate(`/product/${product.barcode || product.id}`)} className="circle-btn"><FaSearch /></button>
+                                            <button onClick={() => navigate(productPath(product))} className="circle-btn"><FaSearch /></button>
                                         </div>
                                     </div>
                                     <div className="item-details">

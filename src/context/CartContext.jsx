@@ -1,18 +1,21 @@
-import { createContext, useContext, useReducer, useEffect } from 'react';
+import { createContext, useContext, useReducer, useEffect, useState, useCallback } from 'react';
+import { themeApi } from '../services/themeApi';
 
 const CartContext = createContext();
 
-const SHIPPING_OPTIONS = [
-  { id: 'standard', label: 'Standard Delivery', cost: 10 },
-];
-
-const FREE_SHIPPING_THRESHOLD = 100;
+const DEFAULT_SHIPPING = {
+  standard_cost: 10,
+  free_threshold: 100,
+  label: 'Standard Delivery',
+  tax_rate_percent: 8.3,
+  tax_rate: 0.083,
+};
 
 const cartReducer = (state, action) => {
   switch (action.type) {
-    case 'ADD_TO_CART':
+    case 'ADD_TO_CART': {
       const existingItem = state.items.find(item => item.id === action.payload.id);
-      
+
       if (existingItem) {
         return {
           ...state,
@@ -23,11 +26,12 @@ const cartReducer = (state, action) => {
           )
         };
       }
-      
+
       return {
         ...state,
         items: [...state.items, action.payload]
       };
+    }
 
     case 'REMOVE_FROM_CART':
       return {
@@ -86,6 +90,33 @@ export const CartProvider = ({ children }) => {
     isOpen: false,
     shippingMethod: 'standard'
   });
+  const [shippingConfig, setShippingConfig] = useState(DEFAULT_SHIPPING);
+
+  const refreshShippingSettings = useCallback(async () => {
+    try {
+      const data = await themeApi.getShippingSettings();
+      if (data?.shipping) {
+        const taxPercent = Number(data.shipping.tax_rate_percent);
+        const safePercent = Number.isFinite(taxPercent) ? taxPercent : DEFAULT_SHIPPING.tax_rate_percent;
+        setShippingConfig({
+          standard_cost: Number(data.shipping.standard_cost) || DEFAULT_SHIPPING.standard_cost,
+          free_threshold: Number(data.shipping.free_threshold) || DEFAULT_SHIPPING.free_threshold,
+          label: data.shipping.label || DEFAULT_SHIPPING.label,
+          tax_rate_percent: safePercent,
+          tax_rate: Number.isFinite(Number(data.shipping.tax_rate))
+            ? Number(data.shipping.tax_rate)
+            : safePercent / 100,
+        });
+      }
+    } catch (error) {
+      console.warn('Using default shipping rates:', error.message);
+      setShippingConfig(DEFAULT_SHIPPING);
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshShippingSettings();
+  }, [refreshShippingSettings]);
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -107,8 +138,19 @@ export const CartProvider = ({ children }) => {
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(state));
-  }, [state.items, state.isOpen, state.shippingMethod]);
+    localStorage.setItem('cart', JSON.stringify({
+      items: state.items,
+      shippingMethod: state.shippingMethod,
+    }));
+  }, [state.items, state.shippingMethod]);
+
+  const shippingOptions = [
+    {
+      id: 'standard',
+      label: shippingConfig.label,
+      cost: shippingConfig.standard_cost,
+    },
+  ];
 
   const addToCart = (product, quantity = 1) => {
     dispatch({ type: 'ADD_TO_CART', payload: { ...product, quantity } });
@@ -139,7 +181,7 @@ export const CartProvider = ({ children }) => {
   };
 
   const setShippingMethod = (methodId) => {
-    const isValid = SHIPPING_OPTIONS.some((o) => o.id === methodId);
+    const isValid = shippingOptions.some((o) => o.id === methodId);
     dispatch({
       type: 'SET_SHIPPING_METHOD',
       payload: isValid ? methodId : 'standard'
@@ -154,18 +196,20 @@ export const CartProvider = ({ children }) => {
     return state.items.reduce((total, item) => total + item.quantity, 0);
   };
 
-  const getShippingCost = (subtotal, methodId = state.shippingMethod) => {
+  const getShippingCost = (subtotal) => {
     if (!subtotal || Number.isNaN(Number(subtotal))) return 0;
-    if (Number(subtotal) >= FREE_SHIPPING_THRESHOLD) return 0;
-
-    const selected = SHIPPING_OPTIONS.find((o) => o.id === methodId) || SHIPPING_OPTIONS[0];
-    return selected.cost;
+    if (Number(subtotal) >= shippingConfig.free_threshold) return 0;
+    return shippingConfig.standard_cost;
   };
 
   const value = {
     ...state,
-    shippingOptions: SHIPPING_OPTIONS,
-    freeShippingThreshold: FREE_SHIPPING_THRESHOLD,
+    shippingOptions,
+    freeShippingThreshold: shippingConfig.free_threshold,
+    taxRate: shippingConfig.tax_rate,
+    taxRatePercent: shippingConfig.tax_rate_percent,
+    shippingConfig,
+    refreshShippingSettings,
     addToCart,
     removeFromCart,
     updateQuantity,

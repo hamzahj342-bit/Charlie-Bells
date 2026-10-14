@@ -8,8 +8,6 @@ import TopBar from '../components/TopBar';
 import ThemeFooter from '../components/ThemeFooter';
 import '../assets/css/Cart.css'; // Make sure this is the main CSS file
 
-const TAX_RATE = 0.083;
-
 const Cart = () => {
   const { 
     items, 
@@ -17,6 +15,8 @@ const Cart = () => {
     setShippingMethod,
     shippingOptions,
     freeShippingThreshold,
+    taxRate,
+    taxRatePercent,
     removeFromCart, 
     updateQuantity, 
     getCartTotal, 
@@ -30,7 +30,7 @@ const Cart = () => {
   const subtotal = getCartTotal();
   const itemsCount = getCartItemsCount();
   const shippingCost = getShippingCost(subtotal, shippingMethod);
-  const tax = subtotal * TAX_RATE;
+  const tax = subtotal * (taxRate || 0);
   const total = Math.max(0, subtotal + tax + shippingCost);
 
   if (items.length === 0) {
@@ -138,7 +138,7 @@ const Cart = () => {
               </div>
 
               <div className="summary-line">
-                <span>Tax</span>
+                <span>Tax ({Number(taxRatePercent || 0)}%)</span>
                 <span>${tax.toFixed(2)}</span>
               </div>
 
