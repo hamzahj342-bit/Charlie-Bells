@@ -49,6 +49,7 @@ const Checkout = () => {
     clearCart,
     taxRate,
     taxRatePercent,
+    refreshShippingSettings,
   } = useCart();
   
   const navigate = useNavigate();
@@ -56,6 +57,11 @@ const Checkout = () => {
     () => (stripePublishableKey ? loadStripe(stripePublishableKey) : null),
     []
   );
+
+  // Always pull latest admin shipping/tax rates when opening checkout
+  useEffect(() => {
+    refreshShippingSettings();
+  }, [refreshShippingSettings]);
   const [currentStep, setCurrentStep] = useState(1);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);

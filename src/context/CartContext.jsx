@@ -96,16 +96,24 @@ export const CartProvider = ({ children }) => {
     try {
       const data = await themeApi.getShippingSettings();
       if (data?.shipping) {
+        const cost = Number(data.shipping.standard_cost);
+        const threshold = Number(data.shipping.free_threshold);
         const taxPercent = Number(data.shipping.tax_rate_percent);
-        const safePercent = Number.isFinite(taxPercent) ? taxPercent : DEFAULT_SHIPPING.tax_rate_percent;
+        const taxRate = Number(data.shipping.tax_rate);
+        // Use Number.isFinite — do NOT use `|| fallback` (0 is a valid free-shipping rate)
+        const safeCost = Number.isFinite(cost) && cost >= 0 ? cost : DEFAULT_SHIPPING.standard_cost;
+        const safeThreshold =
+          Number.isFinite(threshold) && threshold >= 0 ? threshold : DEFAULT_SHIPPING.free_threshold;
+        const safePercent =
+          Number.isFinite(taxPercent) && taxPercent >= 0 && taxPercent <= 100
+            ? taxPercent
+            : DEFAULT_SHIPPING.tax_rate_percent;
         setShippingConfig({
-          standard_cost: Number(data.shipping.standard_cost) || DEFAULT_SHIPPING.standard_cost,
-          free_threshold: Number(data.shipping.free_threshold) || DEFAULT_SHIPPING.free_threshold,
+          standard_cost: safeCost,
+          free_threshold: safeThreshold,
           label: data.shipping.label || DEFAULT_SHIPPING.label,
           tax_rate_percent: safePercent,
-          tax_rate: Number.isFinite(Number(data.shipping.tax_rate))
-            ? Number(data.shipping.tax_rate)
-            : safePercent / 100,
+          tax_rate: Number.isFinite(taxRate) && taxRate >= 0 ? taxRate : safePercent / 100,
         });
       }
     } catch (error) {
