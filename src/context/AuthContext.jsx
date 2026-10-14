@@ -73,34 +73,31 @@ const authReducer = (state, action) => {
   }
 };
 
+function readStoredAuth() {
+  try {
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('user');
+    if (!token || !userData) {
+      return { isAuthenticated: false, user: null, token: null };
+    }
+    const user = JSON.parse(userData);
+    return { isAuthenticated: true, user, token };
+  } catch {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    return { isAuthenticated: false, user: null, token: null };
+  }
+}
+
 export const AuthProvider = ({ children }) => {
+  const stored = readStoredAuth();
   const [state, dispatch] = useReducer(authReducer, {
-    isAuthenticated: false,
-    user: null,
-    token: null,
+    isAuthenticated: stored.isAuthenticated,
+    user: stored.user,
+    token: stored.token,
     isLoading: false,
     error: null
   });
-
-  // Check for existing token on mount
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-
-    if (token && userData) {
-      try {
-        const user = JSON.parse(userData);
-        dispatch({
-          type: 'LOGIN_SUCCESS',
-          payload: { user, token }
-        });
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-      }
-    }
-  }, []);
 
   // Save token and user data to localStorage whenever they change
   useEffect(() => {

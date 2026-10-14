@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { AlertTriangle, ArrowLeft, ArrowRight, Check, CreditCard, MapPin, RefreshCw, ShoppingBag, ShieldCheck, Zap } from 'lucide-react';
 import SideDrawer from '../components/SideDrawer';
 import StripeCardSection from '../components/StripeCardSection';
@@ -53,6 +54,7 @@ const Checkout = () => {
   } = useCart();
   
   const navigate = useNavigate();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const stripePromise = useMemo(
     () => (stripePublishableKey ? loadStripe(stripePublishableKey) : null),
     []
@@ -62,6 +64,16 @@ const Checkout = () => {
   useEffect(() => {
     refreshShippingSettings();
   }, [refreshShippingSettings]);
+
+  // Orders require login so user_id is saved (live DB NOT NULL)
+  useEffect(() => {
+    if (authLoading) return;
+    if (!isAuthenticated) {
+      toast.error('Please log in to complete checkout');
+      navigate('/login', { replace: true, state: { from: '/checkout' } });
+    }
+  }, [authLoading, isAuthenticated, navigate]);
+
   const [currentStep, setCurrentStep] = useState(1);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -435,6 +447,21 @@ const Checkout = () => {
     { id: 2, name: 'Payment', icon: CreditCard },
     { id: 3, name: 'Review', icon: Check }
   ];
+
+  if (authLoading || !isAuthenticated) {
+    return (
+      <div className="ch-checkout-page-wrapper">
+        <TopBar onMenuToggle={() => setSideDrawerOpen(true)} />
+        <div className="container text-center py-5">
+          <div className="ch-industrial-card py-5">
+            <div className="spinner-border text-warning" role="status" />
+            <p className="text-muted mt-3 mb-0">Checking login…</p>
+          </div>
+        </div>
+        <ThemeFooter />
+      </div>
+    );
+  }
 
   if (items.length === 0 && !orderPlaced) {
     return (

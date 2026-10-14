@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLogo } from '../context/LogoContext';
 import { isStaff } from '../utils/roles';
@@ -16,7 +16,9 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, isLoading } = useAuth();
+  const returnTo = location.state?.from || '/';
 
   const handleChange = (e) => {
     setFormData({
@@ -41,7 +43,7 @@ const Login = () => {
       if (isStaff(response.user)) {
         navigate('/admin');
       } else {
-        navigate('/'); // Customer returns to store
+        navigate(returnTo);
       }
       
     } catch (error) {

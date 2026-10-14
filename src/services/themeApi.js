@@ -198,9 +198,9 @@ export const themeApi = {
     return response.data;
   },
 
-  // Orders
+  // Orders (authenticated — backend sets user_id from JWT)
   createOrder: async (orderData) => {
-    const response = await api.post('/orders/guest', orderData);
+    const response = await api.post('/orders', orderData);
     return response.data;
   },
 
