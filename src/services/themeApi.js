@@ -250,6 +250,21 @@ export const themeApi = {
     return response.data;
   },
 
+  getFailedEmails: async () => {
+    const response = await api.get('/orders/failed-emails');
+    return response.data;
+  },
+
+  retryFailedEmails: async () => {
+    const response = await api.post('/orders/retry-emails');
+    return response.data;
+  },
+
+  retryFailedEmail: async (emailId) => {
+    const response = await api.post(`/orders/retry-email/${emailId}`);
+    return response.data;
+  },
+
   // Upload Images
   uploadImages: async (files) => {
     const formData = new FormData();

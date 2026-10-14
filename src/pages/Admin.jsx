@@ -13,13 +13,14 @@ import Products from '../components/Admin/ProductManagement';
 import PaymentAudits from '../components/Admin/PaymentAudits';
 import ShippingSettings from '../components/Admin/ShippingSettings';
 import OrdersReport from '../components/Admin/OrdersReport';
+import FailedEmails from '../components/Admin/FailedEmails';
 import { isSuperAdmin } from '../utils/roles';
 
 import { 
   LayoutDashboard, Package, Tags, Truck, 
   Settings, Menu, LogOut, Store, 
-  Activity, Search, Trophy, Bell, ClipboardList, ShieldCheck,
-  BarChart3
+  Activity, Search, Trophy, ClipboardList, ShieldCheck,
+  BarChart3, Mail
 } from 'lucide-react';
 
 const Admin = () => {
@@ -54,6 +55,7 @@ const Admin = () => {
     { id: 'orders', name: 'Orders', icon: Truck },
     { id: 'orders-report', name: 'Orders Report', icon: BarChart3 },
     { id: 'shipping-settings', name: 'Shipping & Tax', icon: ClipboardList },
+    { id: 'failed-emails', name: 'Failed Emails', icon: Mail },
     ...(superAdmin ? [{ id: 'payment-audits', name: 'Payment Audit', icon: ShieldCheck }] : []),
     { id: 'website-settings', name: 'Settings', icon: Settings },
   ];
@@ -295,6 +297,7 @@ const Admin = () => {
                 {activeTab === 'orders' && <OrderManagement orders={orders} onOrdersChange={() => {}} />}
                 {activeTab === 'orders-report' && <OrdersReport />}
                 {activeTab === 'shipping-settings' && <ShippingSettings />}
+                {activeTab === 'failed-emails' && <FailedEmails />}
                 {activeTab === 'payment-audits' && superAdmin && <PaymentAudits />}
                 {activeTab === 'website-settings' && <WebsiteSettings />}
               </div>

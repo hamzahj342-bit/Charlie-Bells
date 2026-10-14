@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Mail, AlertTriangle, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { themeApi } from '../../services/themeApi';
 import '../../assets/css/admin-email-retry.css';
 
 const FailedEmails = () => {
@@ -8,72 +9,32 @@ const FailedEmails = () => {
   const [loading, setLoading] = useState(true);
   const [retrying, setRetrying] = useState(false);
 
-  useEffect(() => {
-    fetchFailedEmails();
-  }, []);
-
-  const fetchFailedEmails = async () => {
+  const fetchFailedEmails = useCallback(async () => {
     try {
-      const token = localStorage.getItem('token');
-      console.log('Fetching failed emails with token:', token ? 'Present' : 'Missing');
-      
-      const response = await fetch('/api/orders/failed-emails', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
-
-      // Check if response is HTML (error page) instead of JSON
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('text/html')) {
-        const text = await response.text();
-        console.error('Received HTML instead of JSON:', text.substring(0, 200));
-        throw new Error('Server returned HTML instead of JSON. Server may be down or route not found.');
-      }
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Failed emails data:', data);
-        setFailedEmails(data.failedEmails || []);
-      } else {
-        const errorText = await response.text();
-        console.error('Error response:', errorText);
-        toast.error(`Failed to fetch failed emails: ${response.status} ${response.statusText}`);
-      }
+      setLoading(true);
+      const data = await themeApi.getFailedEmails();
+      setFailedEmails(data.failedEmails || []);
     } catch (error) {
       console.error('Error fetching failed emails:', error);
-      toast.error(`Error fetching failed emails: ${error.message}`);
+      toast.error(error.response?.data?.error || 'Unable to load failed emails');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchFailedEmails();
+  }, [fetchFailedEmails]);
 
   const handleRetryAll = async () => {
     try {
       setRetrying(true);
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/orders/retry-emails', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        toast.success(`Retry completed: ${result.successCount} sent, ${result.failureCount} failed`);
-        fetchFailedEmails(); // Refresh the list
-      } else {
-        toast.error('Failed to retry emails');
-      }
+      const result = await themeApi.retryFailedEmails();
+      toast.success(`Retry completed: ${result.successCount} sent, ${result.failureCount} failed`);
+      await fetchFailedEmails();
     } catch (error) {
       console.error('Error retrying emails:', error);
-      toast.error('Error retrying emails');
+      toast.error(error.response?.data?.error || 'Failed to retry emails');
     } finally {
       setRetrying(false);
     }
@@ -81,28 +42,17 @@ const FailedEmails = () => {
 
   const handleRetrySingle = async (emailId) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/orders/retry-email/${emailId}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        if (result.success) {
-          toast.success('Email sent successfully!');
-          fetchFailedEmails(); // Refresh the list
-        } else {
-          toast.error('Email still failed');
-        }
+      const result = await themeApi.retryFailedEmail(emailId);
+      if (result.success) {
+        toast.success('Email sent successfully!');
+        await fetchFailedEmails();
       } else {
-        toast.error('Failed to retry email');
+        toast.error(result.error || 'Email still failed');
+        await fetchFailedEmails();
       }
     } catch (error) {
       console.error('Error retrying email:', error);
-      toast.error('Error retrying email');
+      toast.error(error.response?.data?.error || 'Failed to retry email');
     }
   };
 
@@ -144,20 +94,20 @@ const FailedEmails = () => {
   }
 
   return (
-    <div className="card">
-      <div className="card-header d-flex justify-content-between align-items-center" style={{ backgroundColor: '#262626', color: 'white' }}>
+    <div className="card border-0 shadow-sm" style={{ borderRadius: '16px' }}>
+      <div className="card-header d-flex justify-content-between align-items-center" style={{ backgroundColor: '#262626', color: 'white', borderRadius: '16px 16px 0 0' }}>
         <h5 className="mb-0" style={{ color: 'white' }}>
           <Mail size={20} className="me-2" />
-          Failed Emails Management
+          Failed Emails
         </h5>
         <div className="d-flex gap-2">
           <button
             className="btn btn-sm btn-success"
             onClick={handleRetryAll}
-            disabled={retrying || failedEmails.length === 0}
+            disabled={retrying || failedEmails.filter((e) => e.status === 'pending').length === 0}
           >
             <RefreshCw size={16} className={`me-1 ${retrying ? 'spin' : ''}`} />
-            {retrying ? 'Retrying...' : 'Retry All'}
+            {retrying ? 'Retrying...' : 'Retry All Pending'}
           </button>
           <button
             className="btn btn-sm btn-outline-light"
@@ -172,11 +122,11 @@ const FailedEmails = () => {
           <div className="text-center py-5">
             <CheckCircle size={48} className="text-success mb-3" />
             <h5 className="text-success">No Failed Emails</h5>
-            <p className="text-muted">All emails have been sent successfully!</p>
+            <p className="text-muted mb-0">All order emails have been sent successfully.</p>
           </div>
         ) : (
           <div className="table-responsive">
-            <table className="table table-hover">
+            <table className="table table-hover align-middle">
               <thead>
                 <tr>
                   <th>Order #</th>
@@ -185,7 +135,7 @@ const FailedEmails = () => {
                   <th>Subject</th>
                   <th>Status</th>
                   <th>Retries</th>
-                  <th>Last Retry</th>
+                  <th>Error</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -196,10 +146,8 @@ const FailedEmails = () => {
                       <strong>{email.order_number}</strong>
                     </td>
                     <td>
-                      <div>
-                        <div className="fw-semibold">{email.customer_name}</div>
-                        <small className="text-muted">Order ID: {email.order_id}</small>
-                      </div>
+                      <div className="fw-semibold">{email.customer_name}</div>
+                      <small className="text-muted">Order ID: {email.order_id}</small>
                     </td>
                     <td>
                       <code className="text-break">{email.customer_email}</code>
@@ -216,36 +164,22 @@ const FailedEmails = () => {
                     <td>
                       <span className="badge bg-info">{email.retry_count}/5</span>
                     </td>
-                    <td>
-                      {email.last_retry_at ? (
-                        <small className="text-muted">
-                          {new Date(email.last_retry_at).toLocaleString()}
-                        </small>
-                      ) : (
-                        <span className="text-muted">Never</span>
-                      )}
+                    <td style={{ maxWidth: 220 }}>
+                      <small className="text-danger text-break" title={email.error_message || ''}>
+                        {email.error_message || '—'}
+                      </small>
                     </td>
                     <td>
-                      <div className="btn-group btn-group-sm">
-                        {email.status === 'pending' && (
-                          <button
-                            className="btn btn-outline-primary"
-                            onClick={() => handleRetrySingle(email.id)}
-                            title="Retry this email"
-                          >
-                            <RefreshCw size={14} />
-                          </button>
-                        )}
-                        {email.error_message && (
-                          <button
-                            className="btn btn-outline-secondary"
-                            title={`Error: ${email.error_message}`}
-                            data-bs-toggle="tooltip"
-                          >
-                            <AlertTriangle size={14} />
-                          </button>
-                        )}
-                      </div>
+                      {(email.status === 'pending' || email.status === 'failed') && (
+                        <button
+                          className="btn btn-sm btn-outline-primary"
+                          onClick={() => handleRetrySingle(email.id)}
+                          title="Retry this email"
+                        >
+                          <RefreshCw size={14} className="me-1" />
+                          Retry
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -253,15 +187,15 @@ const FailedEmails = () => {
             </table>
           </div>
         )}
-        
+
         {failedEmails.length > 0 && (
           <div className="mt-3 p-3 bg-light rounded">
-            <h6 className="text-muted mb-2">Summary:</h6>
+            <h6 className="text-muted mb-2">Summary</h6>
             <div className="row">
               <div className="col-md-3">
                 <div className="text-center">
                   <div className="h4 text-warning mb-0">
-                    {failedEmails.filter(e => e.status === 'pending').length}
+                    {failedEmails.filter((e) => e.status === 'pending').length}
                   </div>
                   <small className="text-muted">Pending</small>
                 </div>
@@ -269,7 +203,7 @@ const FailedEmails = () => {
               <div className="col-md-3">
                 <div className="text-center">
                   <div className="h4 text-success mb-0">
-                    {failedEmails.filter(e => e.status === 'sent').length}
+                    {failedEmails.filter((e) => e.status === 'sent').length}
                   </div>
                   <small className="text-muted">Sent</small>
                 </div>
@@ -277,7 +211,7 @@ const FailedEmails = () => {
               <div className="col-md-3">
                 <div className="text-center">
                   <div className="h4 text-danger mb-0">
-                    {failedEmails.filter(e => e.status === 'failed').length}
+                    {failedEmails.filter((e) => e.status === 'failed').length}
                   </div>
                   <small className="text-muted">Failed</small>
                 </div>
