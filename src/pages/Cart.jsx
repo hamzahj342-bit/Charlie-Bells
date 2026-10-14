@@ -61,7 +61,7 @@ const Cart = () => {
       
       <div className="container py-5">
         <div className="cart-header-modern mb-4">
-          <h2 className="navy-title">Chemical Supply Cart</h2>
+          <h2 className="navy-title">Cart</h2>
           <span className="item-count-badge">{itemsCount} Items Reserved</span>
         </div>
 

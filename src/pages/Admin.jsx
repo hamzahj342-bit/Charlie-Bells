@@ -49,7 +49,7 @@ const Admin = () => {
 
   const sidebarItems = [
     { id: 'dashboard', name: 'Analytics Hub', icon: LayoutDashboard },
-    { id: 'products', name: 'Chemical Inventory', icon: Package }, 
+    { id: 'products', name: 'Products Inventory', icon: Package }, 
     { id: 'categories', name: 'Categories', icon: Tags },
     { id: 'orders', name: 'Orders', icon: Truck },
     { id: 'orders-report', name: 'Orders Report', icon: BarChart3 },
