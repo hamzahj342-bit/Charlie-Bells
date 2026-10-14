@@ -1,149 +1,107 @@
-/* Email Retry Button Styles */
+/* Failed Emails — force readable dark text on light admin panel
+   (storefront body color #F5F5F5 / muted styles otherwise bleed in). */
+
 .spin {
   animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-.btn-warning {
-  background-color: #ffc107;
-  border-color: #ffc107;
-  color: #212529;
+.fe-panel {
+  color: #1f2937;
 }
 
-.btn-warning:hover:not(:disabled) {
-  background-color: #e0a800;
-  border-color: #e0a800;
-  color: #212529;
+.fe-panel .card {
+  background: #ffffff;
+  color: #1f2937;
 }
 
-.btn-warning:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.fe-panel .card-body {
+  color: #1f2937;
+  background: #ffffff;
 }
 
-/* Admin Orders Section Header */
-.orders-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding: 1rem;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #dee2e6;
+.fe-panel .table {
+  --bs-table-color: #1f2937;
+  --bs-table-bg: #ffffff;
+  --bs-table-striped-color: #1f2937;
+  --bs-table-hover-color: #0f172a;
+  color: #1f2937 !important;
+  margin-bottom: 0;
 }
 
-.orders-header h4 {
-  margin: 0;
-  color: #262626;
-  font-weight: 600;
-}
-
-.retry-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.retry-button:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
-}
-
-/* Failed Emails Table Styles */
-.failed-emails-table {
-  font-size: 0.875rem;
-}
-
-.failed-emails-table .table th {
-  background-color: #f8f9fa;
-  border-bottom: 2px solid #dee2e6;
-  font-weight: 600;
-  color: #495057;
-}
-
-.failed-emails-table .table td {
+.fe-panel .table > thead th {
+  color: #0f172a !important;
+  background: #f1f5f9 !important;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
   vertical-align: middle;
 }
 
-.status-badge {
-  font-size: 0.75rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
+.fe-panel .table td {
+  color: #1f2937 !important;
+  border-color: #e9eef5;
+  vertical-align: middle;
+  background: #ffffff;
 }
 
-.retry-count-badge {
-  font-size: 0.75rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  background-color: #17a2b8;
-  color: white;
+.fe-panel .table strong,
+.fe-panel .table .fw-semibold {
+  color: #0f172a !important;
 }
 
-.email-actions {
-  display: flex;
-  gap: 0.25rem;
+.fe-panel .table small,
+.fe-panel .text-muted {
+  color: #64748b !important;
 }
 
-.email-actions .btn {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.75rem;
+.fe-panel .table code,
+.fe-panel code {
+  color: #9a3412 !important;
+  background: #fff7ed !important;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85em;
 }
 
-.summary-stats {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  padding: 1rem;
+.fe-panel .fe-error {
+  color: #b91c1c !important;
+  font-size: 0.82rem;
+  line-height: 1.35;
 }
 
-.summary-stats .stat-item {
-  text-align: center;
-  padding: 0.5rem;
+.fe-panel .fe-summary {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  color: #1f2937;
 }
 
-.summary-stats .stat-number {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 0.25rem;
+.fe-panel .fe-summary h6 {
+  color: #475569 !important;
 }
 
-.summary-stats .stat-label {
-  font-size: 0.75rem;
-  color: #6c757d;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+.fe-panel .fe-summary .h4 {
+  font-weight: 800;
 }
 
-/* Responsive adjustments */
+.fe-panel .fe-summary small {
+  color: #64748b !important;
+}
+
+.fe-panel .badge.bg-warning {
+  color: #111827 !important;
+}
+
 @media (max-width: 768px) {
-  .orders-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
-  }
-  
-  .retry-button {
-    justify-content: center;
-  }
-  
-  .failed-emails-table {
-    font-size: 0.75rem;
-  }
-  
-  .summary-stats .stat-number {
-    font-size: 1.25rem;
+  .fe-panel .table {
+    font-size: 0.8rem;
   }
 }
