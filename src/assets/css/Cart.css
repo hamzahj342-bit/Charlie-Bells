@@ -64,88 +64,126 @@
 
 .cart-item-row {
   display: grid;
-  grid-template-columns: 100px 1fr 120px 120px;
+  grid-template-columns: 96px minmax(0, 1fr) 130px 110px;
   align-items: center;
-  gap: 20px;
- 
-  border-bottom: 1px solid #f1f5f9;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(232, 223, 209, 0.35);
+  overflow: hidden;
 }
 
-.item-img-box {
-  width: auto;
-  height: 130px;
+.cart-item-img {
+  width: 96px;
+  height: 96px;
   background: transparent;
   border-radius: 10px;
   padding: 4px;
-  border: 1px solid #edf2f7;
+  border: 1px solid rgba(232, 223, 209, 0.45);
+  flex-shrink: 0;
 }
 
-.item-img-box img {
+.cart-item-img img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
-.item-name {
-  color: var(--cart-charcoal);
+.cart-item-info {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.cart-item-name {
+  color: #f5f0e6;
   font-weight: 700;
-  margin-bottom: 4px;
-  font-size: 1.1rem;
+  margin: 0 0 4px;
+  font-size: 1rem;
+  line-height: 1.35;
+  white-space: normal;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
 }
 
-.item-sku {
-  color: #94a3b8;
-  font-size: 0.75rem;
-  margin-bottom: 8px;
+.cart-item-sku {
+  color: #a89f91;
+  font-size: 0.78rem;
+  margin: 0 0 8px;
 }
 
-.remove-link {
+.cart-remove-btn {
   background: none;
   border: none;
-  color: #dc2626;
+  color: #ef4444;
   font-size: 0.8rem;
   font-weight: 600;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 4px;
   padding: 0;
   cursor: pointer;
 }
 
-.qty-stepper {
+.cart-item-qty {
   display: flex;
-  align-items: center;
-  background: #f1f5f9;
-  border-radius: 8px;
-  width: fit-content;
-  border: 1px solid #e2e8f0;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.qty-stepper button {
+.cart-qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  border: 1px solid rgba(232, 223, 209, 0.35);
+  overflow: hidden;
+}
+
+.cart-qty-stepper button {
   border: none;
   background: none;
-  padding: 5px 12px;
-  color: var(--cart-charcoal);
+  padding: 8px 12px;
+  color: #f5f0e6;
   cursor: pointer;
   display: flex;
   align-items: center;
 }
 
-.qty-stepper button:disabled {
+.cart-qty-stepper button:disabled {
   opacity: 0.3;
 }
 
-.qty-stepper input {
-  width: 35px;
+.cart-qty-stepper input {
+  width: 36px;
   border: none;
   background: none;
   text-align: center;
   font-weight: 700;
-  color: var(--cart-charcoal);
+  color: #f5f0e6;
+  outline: none;
 }
 
-.unit-price { font-size: 0.8rem; color: #64748b; display: block; }
-.total-price { color: var(--cart-primary); font-weight: 800; font-size: 1rem; margin: 0; }
+.cart-item-price {
+  text-align: right;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.cart-unit-price {
+  font-size: 0.75rem;
+  color: #a89f91;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.cart-line-total {
+  color: var(--cart-primary);
+  font-weight: 800;
+  font-size: 1.05rem;
+  margin: 0;
+}
 
 .cart-footer-actions {
   display: flex;
@@ -270,11 +308,11 @@
 }
 
 .trust-badges-cart img {
-  width: 80px; /* Badi image ko yahan control kiya gaya hai */
+  width: 80px; /* Thumbnail size */
   height: auto;
   margin: 0 auto 10px;
   display: block;
-  /* filter: brightness(0) invert(1); Icons ko white karne ke liye */
+  /* filter: brightness(0) invert(1); force white icons */
   opacity: 0.8;
     filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
 }
@@ -288,13 +326,23 @@
 /* Responsive Fixes */
 @media (max-width: 991px) {
   .cart-item-row {
-    grid-template-columns: 80px 1fr 100px;
+    grid-template-columns: 80px minmax(0, 1fr);
+    grid-template-areas:
+      "img info"
+      "qty price";
   }
-  .item-price-box {
-    grid-column: span 3;
+
+  .cart-item-img { grid-area: img; width: 80px; height: 80px; }
+  .cart-item-info { grid-area: info; }
+  .cart-item-qty {
+    grid-area: qty;
+    justify-content: flex-start;
+    padding-top: 8px;
+  }
+  .cart-item-price {
+    grid-area: price;
     text-align: right;
-    border-top: 1px solid #f1f5f9;
-    padding-top: 10px;
+    padding-top: 8px;
   }
 }
 

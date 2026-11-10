@@ -6,19 +6,41 @@ import '../../assets/css/admin-order-management.css';
 
 const getShippingAddress = (order) => {
   if (!order?.shipping_address) return {};
-  const addr = typeof order.shipping_address === 'string'
-    ? JSON.parse(order.shipping_address)
-    : order.shipping_address;
+  const addr =
+    typeof order.shipping_address === 'string'
+      ? (() => {
+          try {
+            return JSON.parse(order.shipping_address);
+          } catch {
+            return {};
+          }
+        })()
+      : order.shipping_address;
   return addr || {};
 };
 
 const getProductSnapshot = (item) => {
   if (!item?.product_snapshot) return {};
-  const snap = typeof item.product_snapshot === 'string'
-    ? JSON.parse(item.product_snapshot)
-    : item.product_snapshot;
+  const snap =
+    typeof item.product_snapshot === 'string'
+      ? (() => {
+          try {
+            return JSON.parse(item.product_snapshot);
+          } catch {
+            return {};
+          }
+        })()
+      : item.product_snapshot;
   return snap || {};
 };
+
+const STATUS_GROUPS = [
+  { key: 'pending', label: 'Pending', icon: Clock },
+  { key: 'processing', label: 'Processing', icon: Package },
+  { key: 'shipped', label: 'Shipped', icon: Truck },
+  { key: 'delivered', label: 'Delivered', icon: CheckCircle },
+  { key: 'cancelled', label: 'Cancelled', icon: Ban },
+];
 
 const STATUS_STYLES = {
   pending: { color: '#92400e', icon: Clock, bg: '#fef3c7', border: '#f59e0b' },
@@ -28,7 +50,7 @@ const STATUS_STYLES = {
   cancelled: { color: '#991b1b', icon: Ban, bg: '#fee2e2', border: '#ef4444' },
 };
 
-const OrderManagement = ({ orders, onOrdersChange }) => {
+const OrderManagement = ({ orders = [], onOrdersChange }) => {
   const [selectedOrder, setSelectedOrder] = useState(null);
 
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
@@ -40,8 +62,8 @@ const OrderManagement = ({ orders, onOrdersChange }) => {
         setSelectedOrder({ ...selectedOrder, status: newStatus });
       }
 
-      onOrdersChange();
-    } catch (error) {
+      onOrdersChange?.();
+    } catch {
       toast.error('Failed to update status');
     }
   };
@@ -69,60 +91,130 @@ const OrderManagement = ({ orders, onOrdersChange }) => {
     );
   };
 
+  const customerName = (order) => {
+    const addr = getShippingAddress(order);
+    return (
+      `${addr.firstName || addr.first_name || ''} ${addr.lastName || addr.last_name || ''}`.trim() ||
+      'Guest'
+    );
+  };
+
+  const shippingSummary = (order) => {
+    const addr = getShippingAddress(order);
+    const cityLine = [addr.city, addr.state, addr.zipCode || addr.zip_code].filter(Boolean).join(', ');
+    return cityLine || addr.country || 'No shipping address';
+  };
+
   return (
-    <div className="om-panel animate__animated animate__fadeIn">
-      <div className="om-header">
-        <h4 className="om-title">Order Dashboard</h4>
-        <div className="om-total">Total Orders: {orders.length}</div>
+    <div>
+      <div className="sm-listings-header">
+        <p className="sm-muted mb-0" style={{ fontSize: '0.9rem' }}>
+          Total orders: {orders.length}
+        </p>
       </div>
 
-      <div className="card om-card">
-        <div className="table-responsive">
-          <table className="table table-hover mb-0">
-            <thead>
-              <tr>
-                <th className="px-4 py-3">Order</th>
-                <th className="py-3">Customer</th>
-                <th className="py-3">Amount</th>
-                <th className="py-3">Status</th>
-                <th className="py-3 text-end px-4">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order) => {
-                const addr = getShippingAddress(order);
+      {orders.length === 0 ? (
+        <div className="sm-card sm-empty">
+          <ShoppingCart size={40} className="mb-2 opacity-50" />
+          <p className="mb-0">No orders yet.</p>
+        </div>
+      ) : (
+        STATUS_GROUPS.map((group) => {
+          const groupOrders = orders.filter((o) => o.status === group.key);
+          if (groupOrders.length === 0) return null;
+          const Icon = group.icon;
+          return (
+            <section key={group.key} className="sm-order-group">
+              <div className="sm-order-group-head">
+                <Icon size={16} />
+                <span>{group.label}</span>
+                <span className="sm-order-count">{groupOrders.length}</span>
+              </div>
+              {groupOrders.map((order) => {
+                const items = order.order_items || [];
                 return (
-                  <tr key={order.id}>
-                    <td className="px-4">
-                      <div className="om-order-id">#{order.id}</div>
-                      <div className="om-order-date">{new Date(order.created_at).toLocaleDateString()}</div>
-                    </td>
-                    <td>
-                      <div className="om-customer-name">
-                        {addr.firstName || addr.first_name || ''} {addr.lastName || addr.last_name || 'Guest'}
-                      </div>
-                      <div className="om-customer-phone">{addr.phone || 'No Phone'}</div>
-                    </td>
-                    <td>
-                      <span className="om-amount">${Number(order.total_amount || 0).toFixed(2)}</span>
-                    </td>
-                    <td>{getStatusBadge(order.status)}</td>
-                    <td className="text-end px-4">
+                  <article key={order.id} className="sm-order-card">
+                    <div>
+                      <p className="sm-order-customer">{customerName(order)}</p>
+                      <p className="sm-order-id">
+                        Order #{order.id} · {new Date(order.created_at).toLocaleDateString()}
+                      </p>
+                      {items.slice(0, 3).map((item) => {
+                        const snap = getProductSnapshot(item);
+                        return (
+                          <div key={item.id} className="sm-order-item">
+                            <img
+                              src={snap.image_url || ''}
+                              alt={snap.name || 'Product'}
+                              onError={(e) => {
+                                e.target.style.visibility = 'hidden';
+                              }}
+                            />
+                            <div>
+                              <p className="sm-order-item-name">{snap.name || 'Product'}</p>
+                              <p className="sm-order-item-meta">
+                                Qty {item.quantity} · SKU: {snap.sku || 'N/A'}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {items.length > 3 && (
+                        <p className="sm-order-item-meta mt-2 mb-0">+{items.length - 3} more items</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <p className="sm-order-meta-line">
+                        <strong>${Number(order.total_amount || 0).toFixed(2)}</strong>
+                      </p>
+                      <p className="sm-order-meta-line sm-muted">{shippingSummary(order)}</p>
+                      <div>{getStatusBadge(order.status)}</div>
+                    </div>
+
+                    <div className="sm-order-actions">
                       <button
-                        className="btn btn-sm om-view-btn"
+                        type="button"
+                        className="sm-btn-outline"
                         onClick={() => setSelectedOrder(order)}
-                        aria-label={`View order ${order.id}`}
                       >
-                        <Eye size={16} />
+                        <Eye size={14} className="me-1" /> View
                       </button>
-                    </td>
-                  </tr>
+                      {group.key === 'pending' && (
+                        <button
+                          type="button"
+                          className="sm-btn-dark"
+                          onClick={() => handleUpdateOrderStatus(order.id, 'processing')}
+                        >
+                          Start processing
+                        </button>
+                      )}
+                      {group.key === 'processing' && (
+                        <button
+                          type="button"
+                          className="sm-btn-dark"
+                          onClick={() => handleUpdateOrderStatus(order.id, 'shipped')}
+                        >
+                          Mark shipped
+                        </button>
+                      )}
+                      {group.key === 'shipped' && (
+                        <button
+                          type="button"
+                          className="sm-btn-dark"
+                          onClick={() => handleUpdateOrderStatus(order.id, 'delivered')}
+                        >
+                          Mark delivered
+                        </button>
+                      )}
+                    </div>
+                  </article>
                 );
               })}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            </section>
+          );
+        })
+      )}
 
       {selectedOrder && (
         <div
@@ -151,14 +243,19 @@ const OrderManagement = ({ orders, onOrdersChange }) => {
                             <>
                               <div>
                                 <strong>
-                                  {addr.firstName || addr.first_name || ''} {addr.lastName || addr.last_name || 'Guest'}
+                                  {addr.firstName || addr.first_name || ''}{' '}
+                                  {addr.lastName || addr.last_name || 'Guest'}
                                 </strong>
                               </div>
                               <div className="text-muted">{addr.address || 'No address'}</div>
                               <div className="text-muted">{cityLine || 'No city'}</div>
                               <div className="text-muted">{addr.country || 'United States'}</div>
-                              <div className="mt-2"><span className="om-label">Email:</span> {addr.email || 'N/A'}</div>
-                              <div><span className="om-label">Phone:</span> {addr.phone || 'N/A'}</div>
+                              <div className="mt-2">
+                                <span className="om-label">Email:</span> {addr.email || 'N/A'}
+                              </div>
+                              <div>
+                                <span className="om-label">Phone:</span> {addr.phone || 'N/A'}
+                              </div>
                             </>
                           );
                         })()}
@@ -178,7 +275,11 @@ const OrderManagement = ({ orders, onOrdersChange }) => {
                         </div>
                         <div className="d-flex justify-content-between align-items-center mt-1">
                           <span>Payment Status</span>
-                          <span className={`fw-bold ${selectedOrder.payment_status === 'paid' ? 'text-success' : 'text-danger'}`}>
+                          <span
+                            className={`fw-bold ${
+                              selectedOrder.payment_status === 'paid' ? 'text-success' : 'text-danger'
+                            }`}
+                          >
                             {(selectedOrder.payment_status || 'unknown').toUpperCase()}
                           </span>
                         </div>
@@ -245,7 +346,9 @@ const OrderManagement = ({ orders, onOrdersChange }) => {
                                       />
                                     </div>
                                     <div>
-                                      <div className="fw-medium small">Name: {snap.name || 'Product'}</div>
+                                      <div className="fw-medium small">
+                                        Name: {snap.name || 'Product'}
+                                      </div>
                                       <small className="text-muted">SKU: {snap.sku || 'N/A'}</small>
                                     </div>
                                   </div>
@@ -302,7 +405,7 @@ const OrderManagement = ({ orders, onOrdersChange }) => {
               </div>
               <div className="modal-footer border-0">
                 <button className="btn btn-dark px-4" onClick={() => setSelectedOrder(null)}>
-                  Close Window
+                  Close
                 </button>
               </div>
             </div>

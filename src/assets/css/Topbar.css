@@ -392,11 +392,23 @@
 
 /* --- DESKTOP CENTERING & MOBILE HIDE FIXES --- */
 
-/* 1. Desktop View (>= 992px): Center Links & Keep Icons Right-Aligned */
+/* 1. Desktop View (>= 992px): Center Links, menu left, icons right */
 @media (min-width: 992px) {
   .ts-main-navbar .container {
     position: relative;
     justify-content: center !important;
+  }
+
+  .ts-nav-menu-btn {
+    position: absolute;
+    left: 12px;
+    z-index: 2;
+    color: var(--brand-text-light, #fff);
+    font-size: 1.15rem;
+  }
+
+  .ts-nav-menu-btn:hover {
+    color: var(--brand-gold);
   }
 
   .ts-right-actions {

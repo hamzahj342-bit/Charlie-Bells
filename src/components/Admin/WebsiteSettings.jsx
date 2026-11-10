@@ -193,30 +193,25 @@ const WebsiteSettings = () => {
   return (
     <div className="website-settings animate__animated animate__fadeIn">
       {/* Header Section */}
-      <div className="d-flex justify-content-between align-items-center mb-4 bg-white p-4 rounded-3 shadow-sm border-bottom border-primary border-3">
+      <div className="sm-card d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <div>
-          <h4 className="fw-bold mb-1 text-dark d-flex align-items-center gap-2">
-            <Settings size={24} className="text-primary" /> Configuration Console
+          <h4 className="fw-bold mb-1 text-dark d-flex align-items-center gap-2" style={{ fontSize: '1.05rem' }}>
+            <Settings size={20} /> Website settings
           </h4>
-          <p className="text-muted small mb-0">Manage global variables and chemical brand identity</p>
+          <p className="sm-muted small mb-0">Manage storefront settings and brand identity</p>
         </div>
-        <div className="btn-group shadow-sm">
-          <button className="btn btn-outline-primary bg-white px-3" onClick={fetchSettings}>
-            <RefreshCw size={16} className="me-2" /> Refresh
-          </button>
-          <button className="btn btn-primary px-3" style={{ backgroundColor: '#0284c7' }} onClick={fetchSettings}>
-            <ShieldCheck size={16} className="me-2" /> System Sync
-          </button>
-        </div>
+        <button type="button" className="sm-btn-outline" onClick={fetchSettings}>
+          <RefreshCw size={16} /> Refresh
+        </button>
       </div>
 
       <div className="row g-4">
         {Object.entries(settings).map(([category, categorySettings]) => (
           <div key={category} className="col-12">
-            <div className="card border-0 shadow-sm overflow-hidden" style={{ borderRadius: '12px' }}>
-              <div className="card-header bg-light py-3 border-0">
-                <h6 className="mb-0 fw-bold text-dark text-uppercase d-flex align-items-center gap-2" style={{ letterSpacing: '1px' }}>
-                  <Globe size={18} className="text-primary" /> {category} Parameters
+            <div className="card border-0 overflow-hidden" style={{ borderRadius: '12px', border: '1px solid #e5e0d8' }}>
+              <div className="card-header bg-white py-3" style={{ borderBottom: '1px solid #e5e0d8' }}>
+                <h6 className="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
+                  <Globe size={18} /> {category}
                 </h6>
               </div>
               <div className="card-body bg-white p-4">
@@ -246,9 +241,9 @@ const WebsiteSettings = () => {
       </div>
 
       {/* Footer Info */}
-      <div className="mt-4 p-3 bg-dark rounded-3 text-white-50 small d-flex align-items-center gap-2">
+      <div className="mt-4 p-3 sm-card small sm-muted d-flex align-items-center gap-2">
         <ShieldCheck size={14} />
-        <span>System running on secure protocol. All changes are logged in the audit trail.</span>
+        <span>Changes apply to the live storefront.</span>
       </div>
     </div>
   );

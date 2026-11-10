@@ -235,6 +235,16 @@ export const themeApi = {
     return response.data;
   },
 
+  pingTraffic: async (visitorKey) => {
+    const response = await api.post('/traffic/ping', { visitorKey });
+    return response.data;
+  },
+
+  getTrafficStats: async (params = {}) => {
+    const response = await api.get('/traffic', { params });
+    return response.data;
+  },
+
   getShippingSettings: async () => {
     const response = await api.get('/shipping');
     return response.data;

@@ -288,6 +288,7 @@
     border: 1px solid #E5E7EB;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 8px 24px rgba(44, 44, 46, 0.06);
+    cursor: pointer;
 }
 
 .item-card:hover {

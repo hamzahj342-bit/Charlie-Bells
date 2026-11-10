@@ -93,8 +93,8 @@ const ShippingSettings = () => {
     <div className="om-panel">
       <div className="om-header">
         <div className="d-flex align-items-center gap-2">
-          <Truck size={22} style={{ color: '#f26522' }} />
-          <h4 className="om-title mb-0">Shipping & Tax Settings</h4>
+          <Truck size={22} />
+          <h4 className="om-title mb-0">Shipping & Tax</h4>
         </div>
         <button className="btn btn-sm btn-outline-dark d-flex align-items-center gap-2" onClick={loadSettings} disabled={loading}>
           <RefreshCw size={14} /> Reload
@@ -188,10 +188,10 @@ const ShippingSettings = () => {
           <div className="card om-card h-100">
             <div className="card-body p-4">
               <div className="d-flex align-items-center gap-2 mb-3">
-                <Info size={18} style={{ color: '#f26522' }} />
+                <Info size={18} />
                 <h6 className="fw-bold mb-0">Live Preview</h6>
               </div>
-              <div className="p-3 rounded-3 mb-3" style={{ background: '#fff7ed', border: '1px solid #fed7aa' }}>
+              <div className="p-3 rounded-3 mb-3" style={{ background: '#f8f5f2', border: '1px solid #e5e0d8' }}>
                 <div className="d-flex justify-content-between mb-2">
                   <span>Method</span>
                   <strong>{form.label || 'Standard Delivery'}</strong>

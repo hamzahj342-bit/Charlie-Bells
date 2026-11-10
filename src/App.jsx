@@ -16,6 +16,7 @@ import AllProducts from './pages/AllProducts';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { LogoProvider } from './context/LogoContext';
+import TrafficBeacon from './components/TrafficBeacon';
 
 // Import theme CSS
 import './assets/css/bootstrap.min.css';
@@ -33,6 +34,7 @@ function App() {
         <LogoProvider>
           <Router>
           <div className="App">
+            <TrafficBeacon />
             {/* <ThemeNavbar /> */}
             <main>
               <AnimatePresence mode="wait">

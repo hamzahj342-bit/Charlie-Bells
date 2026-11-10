@@ -369,6 +369,7 @@ import {
   absoluteUrl,
   SITE_NAME,
 } from '../utils/seo';
+import { discountPercent, effectivePrice, formatMoney, hasDiscount } from '../utils/pricing';
 import '../assets/css/ThemeProductDetail.css';
 
 const ThemeProductDetail = () => {
@@ -380,30 +381,29 @@ const ThemeProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedSize, setSelectedSize] = useState('');
-  const [sizes, setSizes] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [reviewsLoading, setReviewsLoading] = useState(true);
   const [reviewForm, setReviewForm] = useState({ name: '', rating: '', comment: '', review_images: [] });
   const [sideDrawerOpen, setSideDrawerOpen] = useState(false);
+  const [liveVisitors, setLiveVisitors] = useState(12);
 
   const themeColor = "#001d3d"; // Navy Blue
 
+  // Fake social-proof visitor count — drifts every few seconds
+  useEffect(() => {
+    const tick = () => {
+      setLiveVisitors((prev) => {
+        const next = prev + (Math.random() > 0.5 ? 1 : -1) * (1 + Math.floor(Math.random() * 3));
+        return Math.min(28, Math.max(6, next));
+      });
+    };
+    const id = setInterval(tick, 2500);
+    return () => clearInterval(id);
+  }, []);
+
   useEffect(() => {
     fetchProduct();
-    fetchSizes();
   }, [slug]);
-
-  const fetchSizes = async () => {
-    try {
-      const sizesData = await themeApi.getSizes();
-      setSizes(sizesData);
-    } catch (error) {
-      setSizes([
-        { id: 1, size: '500ml' }, { id: 2, size: '1L' }, { id: 3, size: '5L' },
-        { id: 4, size: '10L' }, { id: 5, size: '25L' }, { id: 6, size: '50L' }
-      ]);
-    }
-  };
 
   // Reviews are loaded after product is fetched (so we have the numeric product id)
 
@@ -412,6 +412,7 @@ const ThemeProductDetail = () => {
       setLoading(true);
       const productData = await themeApi.getProductById(slug);
       setProduct(productData);
+      setSelectedSize('');
 
       // Canonicalize barcode/id URLs to the SEO name slug
       const canonicalSlug = productPathSlug(productData);
@@ -485,15 +486,15 @@ const ThemeProductDetail = () => {
         { '@type': 'PropertyValue', name: 'SKU', value: skuValue },
         { '@type': 'PropertyValue', name: 'Category', value: categoryName },
         { '@type': 'PropertyValue', name: 'Availability', value: inStock ? 'In Stock' : 'Out of Stock' },
-        ...(Number.isFinite(stockQty)
-          ? [{ '@type': 'PropertyValue', name: 'Stock Quantity', value: String(stockQty) }]
+        ...(inStock
+          ? [{ '@type': 'PropertyValue', name: 'Stock Quantity', value: '10+' }]
           : []),
       ],
       offers: {
         '@type': 'Offer',
         url: absoluteUrl(path),
         priceCurrency: 'USD',
-        price: String(product.discount_price || product.price),
+        price: String(effectivePrice(product)),
         itemCondition: 'https://schema.org/NewCondition',
         availability: inStock
           ? 'https://schema.org/InStock'
@@ -520,7 +521,7 @@ const ThemeProductDetail = () => {
           name: `How much does ${product.name} cost?`,
           acceptedAnswer: {
             '@type': 'Answer',
-            text: `${product.name} is priced at $${Number(product.discount_price || product.price).toFixed(2)} USD on charlie-bells.com.`,
+            text: `${product.name} is priced at ${formatMoney(effectivePrice(product))} USD on charlie-bells.com.`,
           },
         },
         {
@@ -555,20 +556,59 @@ const ThemeProductDetail = () => {
     };
   }, [product]);
 
+  const listingSizes = (() => {
+    if (Array.isArray(product?.sizes) && product.sizes.length > 0) {
+      return product.sizes
+        .map((s) => ({
+          size: String(s?.size || s?.name || '').trim(),
+          quantity: Math.max(0, parseInt(s?.quantity ?? 0, 10) || 0),
+        }))
+        .filter((s) => s.size);
+    }
+    if (Array.isArray(product?.stock_items) && product.stock_items.length > 0) {
+      return product.stock_items
+        .map((item) => ({
+          size: String(item?.size?.size || '').trim(),
+          quantity: Math.max(0, parseInt(item?.quantity ?? 0, 10) || 0),
+        }))
+        .filter((s) => s.size);
+    }
+    return [];
+  })();
+
+  const hasSizeOptions = listingSizes.length > 0;
+  const selectedSizeRow = listingSizes.find((s) => s.size === selectedSize);
+
   const handleAddToCart = () => {
+    if (hasSizeOptions && !selectedSize) {
+      toast.error('Please select a size');
+      return;
+    }
+    if (hasSizeOptions && selectedSizeRow && selectedSizeRow.quantity <= 0) {
+      toast.error('Selected size is out of stock');
+      return;
+    }
     addToCart({ 
       ...product, 
-      selectedSize, 
-      price: product.discount_price || product.price 
+      selectedSize: hasSizeOptions ? selectedSize : undefined, 
+      price: effectivePrice(product) 
     }, quantity);
     toast.success(`${product.name} added to cart!`);
   };
 
   const handleBuyNow = () => {
+    if (hasSizeOptions && !selectedSize) {
+      toast.error('Please select a size');
+      return;
+    }
+    if (hasSizeOptions && selectedSizeRow && selectedSizeRow.quantity <= 0) {
+      toast.error('Selected size is out of stock');
+      return;
+    }
     addToCart({ 
       ...product, 
-      selectedSize, 
-      price: product.discount_price || product.price 
+      selectedSize: hasSizeOptions ? selectedSize : undefined, 
+      price: effectivePrice(product) 
     }, quantity);
     navigate('/checkout');
   };
@@ -621,7 +661,11 @@ const ThemeProductDetail = () => {
 
   if (!product) return null;
 
-  const stockQty = Number(product.stock_quantity);
+  const stockQty = hasSizeOptions
+    ? (selectedSizeRow
+        ? Number(selectedSizeRow.quantity)
+        : listingSizes.reduce((sum, s) => sum + s.quantity, 0))
+    : Number(product.stock_quantity);
   const isAvailable = Number.isFinite(stockQty)
     ? stockQty > 0
     : (product.stock !== undefined ? Number(product.stock) > 0 : true);
@@ -675,25 +719,29 @@ const ThemeProductDetail = () => {
               </div>
 
               <div className="price-display mb-3">
-                {product.discount_price && product.discount_price < product.price ? (
+                {hasDiscount(product) ? (
                   <>
-                    <span className="original-price-tag">${product.price}</span>
-                    <span className="price-tag">${product.discount_price}</span>
+                    <span className="original-price-tag">{formatMoney(product.price)}</span>
+                    <span className="price-tag">{formatMoney(product.discount_price)}</span>
                     <span className="discount-badge">
-                      -{Math.round(((product.price - product.discount_price) / product.price) * 100)}%
+                      -{discountPercent(product)}%
                     </span>
                   </>
                 ) : (
-                  <span className="price-tag">${product.price}</span>
+                  <span className="price-tag">{formatMoney(product.price)}</span>
                 )}
               </div>
 
               <p
-                className={`fw-semibold mb-3 ${isAvailable ? 'text-success' : 'text-danger'}`}
+                className={`fw-semibold mb-2 ${isAvailable ? 'text-success' : 'text-danger'}`}
                 data-stock={isAvailable ? 'in-stock' : 'out-of-stock'}
-                data-stock-quantity={Number.isFinite(stockQty) ? String(stockQty) : ''}
               >
                 {isAvailable ? 'In Stock — Ready to Ship' : 'Currently Out of Stock'}
+              </p>
+
+              <p className="live-visitors mb-3" aria-live="polite">
+                <span className="live-visitors-dot" aria-hidden="true" />
+                {liveVisitors} people viewing this product right now
               </p>
 
               {/* GEO / AEO: structured specs table for crawlers + answer engines */}
@@ -725,7 +773,7 @@ const ThemeProductDetail = () => {
                       <th scope="row" className="spec-label">Availability</th>
                       <td className="spec-value">
                         {isAvailable
-                          ? `In Stock (Ready to Ship)${Number.isFinite(stockQty) && stockQty > 0 ? ` — ${stockQty} units` : ''}`
+                          ? 'In Stock (Ready to Ship) — 10+ units'
                           : 'Out of Stock'}
                       </td>
                     </tr>
@@ -736,6 +784,34 @@ const ThemeProductDetail = () => {
                 ) : null}
               </section>
 
+              {hasSizeOptions && (
+                <div className="size-picker mb-4">
+                  <p className="fw-semibold mb-2 text-white">Size</p>
+                  <div className="d-flex flex-wrap gap-2">
+                    {listingSizes.map((row) => {
+                      const soldOut = row.quantity <= 0;
+                      const active = selectedSize === row.size;
+                      return (
+                        <button
+                          key={row.size}
+                          type="button"
+                          className={`btn size-btn ${active ? 'active' : ''}`}
+                          disabled={soldOut}
+                          onClick={() => setSelectedSize(row.size)}
+                          title={soldOut ? 'Out of stock' : `${row.quantity} in stock`}
+                        >
+                          {row.size}
+                          {soldOut ? ' (Sold out)' : ''}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {!selectedSize && (
+                    <small className="text-warning d-block mt-2">Select a size to continue</small>
+                  )}
+                </div>
+              )}
+
               <div className="action-row mb-5">
                 <div className="qty-input">
                   <button onClick={() => setQuantity(q => Math.max(1, q-1))}>-</button>
@@ -743,10 +819,18 @@ const ThemeProductDetail = () => {
                   <button onClick={() => setQuantity(q => q+1)}>+</button>
                 </div>
                 <div className="action-buttons">
-                  <button className="btn btn-add-cart" onClick={handleAddToCart}>
+                  <button
+                    className="btn btn-add-cart"
+                    onClick={handleAddToCart}
+                    disabled={!isAvailable || (hasSizeOptions && !selectedSize)}
+                  >
                     <ShoppingCart className="me-2" size={20} /> ADD TO CART
                   </button>
-                  <button className="btn btn-buy-now" onClick={handleBuyNow}>
+                  <button
+                    className="btn btn-buy-now"
+                    onClick={handleBuyNow}
+                    disabled={!isAvailable || (hasSizeOptions && !selectedSize)}
+                  >
                     Buy Now
                   </button>
                 </div>

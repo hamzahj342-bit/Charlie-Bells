@@ -1,290 +1,591 @@
-import React from 'react';
-import { 
-  X, Save, Beaker, ClipboardList, 
-  Image as ImageIcon, Hash, Tag, 
-  Layers, AlertCircle, UploadCloud, Trash2 
+import { useEffect, useMemo, useState } from 'react';
+import {
+  Save,
+  Image as ImageIcon,
+  Hash,
+  Tag,
+  Layers,
+  UploadCloud,
+  Trash2,
+  ClipboardList,
+  ExternalLink,
+  Ruler,
+  Plus,
+  X,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { productPath } from '../utils/seo';
+import { themeApi } from '../services/themeApi';
 
-const ProductModal = ({ 
-  onClose, 
-  productForm, 
-  setProductForm, 
-  editingProduct, 
-  nextSku, 
-  categories, 
-  uploadedImages, 
-  uploadingImages, 
-  handleImageUpload, 
-  removeUploadedImage, 
-  handleSaveProduct
+const TABS = [
+  { id: 'photos', label: 'Photos' },
+  { id: 'details', label: 'Item details' },
+  { id: 'options', label: 'Item options' },
+  { id: 'pricing', label: 'Pricing & inventory' },
+];
+
+const normalizeSizes = (sizes) =>
+  (Array.isArray(sizes) ? sizes : [])
+    .map((s) => ({
+      size: String(s?.size || s?.name || s || '').trim(),
+      quantity: Math.max(0, parseInt(s?.quantity ?? 0, 10) || 0),
+    }))
+    .filter((s) => s.size);
+
+const ProductModal = ({
+  onClose,
+  productForm,
+  setProductForm,
+  editingProduct,
+  categories,
+  uploadedImages,
+  uploadingImages,
+  handleImageUpload,
+  removeUploadedImage,
+  setCoverImage,
+  handleSaveProduct,
 }) => {
+  const [activeSection, setActiveSection] = useState('photos');
+  const [showSizeModal, setShowSizeModal] = useState(false);
+  const [draftOptions, setDraftOptions] = useState([]);
+  const [optionInput, setOptionInput] = useState('');
+  const [catalogSizes, setCatalogSizes] = useState([]);
+
+  const isEdit = Boolean(editingProduct);
+  const title = isEdit ? productForm.name?.trim() || 'Edit listing' : 'New listing';
+  const statusActive = (productForm.status || 'active') === 'active';
+  const sizes = normalizeSizes(productForm.sizes);
+  const sizeTotal = useMemo(
+    () => sizes.reduce((sum, s) => sum + (Number(s.quantity) || 0), 0),
+    [sizes]
+  );
+  const hasSizes = sizes.length > 0;
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await themeApi.getSizes();
+        if (!cancelled) setCatalogSizes(Array.isArray(data) ? data : []);
+      } catch {
+        if (!cancelled) setCatalogSizes([]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const openSizeModal = () => {
+    setDraftOptions(sizes.map((s) => s.size));
+    setOptionInput('');
+    setShowSizeModal(true);
+  };
+
+  const addDraftOption = (raw) => {
+    const value = String(raw || '').trim();
+    if (!value) return;
+    setDraftOptions((prev) =>
+      prev.some((o) => o.toLowerCase() === value.toLowerCase()) ? prev : [...prev, value]
+    );
+    setOptionInput('');
+  };
+
+  const removeDraftOption = (value) => {
+    setDraftOptions((prev) => prev.filter((o) => o !== value));
+  };
+
+  const applySizeOptions = () => {
+    if (draftOptions.length === 0) return;
+    const prevMap = Object.fromEntries(sizes.map((s) => [s.size.toLowerCase(), s.quantity]));
+    const next = draftOptions.map((name) => ({
+      size: name,
+      quantity: prevMap[name.toLowerCase()] ?? 0,
+    }));
+    setProductForm({
+      ...productForm,
+      sizes: next,
+      stock_quantity: next.reduce((sum, s) => sum + (Number(s.quantity) || 0), 0),
+    });
+    setShowSizeModal(false);
+  };
+
+  const updateSizeQty = (index, qty) => {
+    const next = sizes.map((s, i) =>
+      i === index ? { ...s, quantity: Math.max(0, parseInt(qty, 10) || 0) } : s
+    );
+    setProductForm({
+      ...productForm,
+      sizes: next,
+      stock_quantity: next.reduce((sum, s) => sum + (Number(s.quantity) || 0), 0),
+    });
+  };
+
+  const removeSizeRow = (index) => {
+    const next = sizes.filter((_, i) => i !== index);
+    setProductForm({
+      ...productForm,
+      sizes: next,
+      stock_quantity: next.length
+        ? next.reduce((sum, s) => sum + (Number(s.quantity) || 0), 0)
+        : productForm.stock_quantity,
+    });
+  };
+
+  const clearSizes = () => {
+    setProductForm({ ...productForm, sizes: [] });
+  };
+
   return (
-    <>
-      {/* Backdrop with High-End Blur */}
-      <div 
-        className="modal-backdrop show" 
-        style={{ 
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
-          backgroundColor: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(8px)', zIndex: 1040 
-        }}
-      ></div>
+    <div className="sm-listing-page">
+      <div className="sm-listing-page-top">
+        <nav className="sm-listing-crumb" aria-label="Breadcrumb">
+          <button type="button" className="sm-listing-crumb-link" onClick={onClose}>
+            Listings
+          </button>
+          <span className="sm-listing-crumb-sep">›</span>
+          <span>{isEdit ? 'Edit listing' : 'New listing'}</span>
+        </nav>
 
-      <div className="modal fade show d-flex align-items-center justify-content-center" 
-           style={{ position: 'fixed', top: 0, left: 0, zIndex: 1050, width: '100%', height: '100%' }}>
-        
-        <div className="modal-dialog modal-lg border-0 shadow-lg" style={{ maxWidth: '850px', width: '95%' }}>
-          <div className="modal-content border-0 overflow-hidden" style={{ borderRadius: '24px', maxHeight: '92vh' }}>
-            
-            {/* Header - Home Care */}
-            <div className="modal-header border-0 p-4 align-items-center" style={{ backgroundColor: '#0f172a', color: 'white' }}>
-              <div className="d-flex align-items-center gap-3">
-                <div className="rounded-3 p-2 d-flex align-items-center justify-content-center" style={{ backgroundColor: '#0284c7' }}>
-                  <Beaker size={26} className="text-white" />
-                </div>
-                <div>
-                  <h5 className="modal-title fw-bold mb-0" style={{ fontSize: '1.25rem', letterSpacing: '-0.5px', color: 'white', margin: '10px 0px 0px 15px' }}>
-                    {editingProduct ? 'Update Product' : 'Product Registration'}
-                  </h5>
-                  <div className="d-flex align-items-center gap-2 mt-1">
-                    <span className="badge bg-soft-info text-info fw-normal" style={{ backgroundColor: 'rgba(2, 132, 199, 0.2)', fontSize: '0.7rem' }}>
-                       MOD-2026-V1
-                    </span>
-                    <span className="text-white-50 small" style={{ fontSize: '0.75rem' }}>Inventory Control Protocol</span>
-                  </div>
-                </div>
+        <div className="sm-listing-page-head">
+          <div className="min-w-0">
+            <h1 className="sm-listing-page-title">{title}</h1>
+            {isEdit && (
+              <div className="sm-listing-status-row">
+                <span className={`sm-listing-status ${statusActive ? 'active' : 'inactive'}`}>
+                  {statusActive ? 'Active' : 'Inactive'}
+                </span>
+                {editingProduct?.created_at && (
+                  <span className="sm-muted small">
+                    Listed on{' '}
+                    {new Date(editingProduct.created_at).toLocaleDateString(undefined, {
+                      day: '2-digit',
+                      month: 'short',
+                      year: 'numeric',
+                    })}
+                  </span>
+                )}
               </div>
-              <button 
-                type="button" 
-                className="btn-close btn-close-white shadow-none ms-auto" 
-                onClick={onClose}
-              ></button>
-            </div>
+            )}
+          </div>
+          {isEdit && (
+            <Link
+              to={productPath(editingProduct)}
+              className="sm-btn-outline"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <ExternalLink size={14} /> View on shop
+            </Link>
+          )}
+        </div>
 
-            <div className="modal-body p-4 bg-light" style={{ overflowY: 'auto' }}>
-              <div className="row g-4">
-                
-                {/* Right Column: Information & Classification */}
-                <div className="col-lg-7">
-                  <div className="d-flex flex-column gap-4">
-                    
-                    {/* General Info Card */}
-                    <div className="card border-0 shadow-sm p-3" style={{ borderRadius: '16px' }}>
-                      <h6 className="text-dark fw-bold mb-3 d-flex align-items-center gap-2">
-                        <ClipboardList size={18} className="text-primary" /> Core Details
-                      </h6>
-                      <div className="row g-3">
-                        <div className="col-12">
-                          <label className="form-label small fw-bold text-muted mb-1">Product Name</label>
-                          <input
-                            type="text"
-                            className="form-control border-0 bg-light p-2 shadow-none"
-                            style={{ borderRadius: '8px' }}
-                            placeholder="e.g. Detergents, Cleaners, Chemicals ..."
-                            value={productForm.name}
-                            onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
-                          />
-                        </div>
-                        <div className="col-md-6">
-                          <label className="form-label small fw-bold text-muted mb-1">SKU</label>
-                          <div className="input-group">
-                            <span className="input-group-text border-0 bg-light text-muted" style={{ borderTopLeftRadius: '8px', borderBottomLeftRadius: '8px' }}>
-                              <Hash size={14} />
-                            </span>
-                            <input
-                              type="text"
-                              className="form-control border-0 bg-light shadow-none fw-bold"
-                              style={{ borderTopRightRadius: '8px', borderBottomRightRadius: '8px' }}
-                              value={editingProduct ? editingProduct.sku : nextSku}
-                              disabled
-                            />
-                          </div>
-                        </div>
-                        <div className="col-md-6">
-                          <label className="form-label small fw-bold text-muted mb-1">Category</label>
-                          <select
-                            className="form-select border-0 bg-light shadow-none"
-                            style={{ borderRadius: '8px' }}
-                            value={productForm.category_id}
-                            onChange={(e) => setProductForm({ ...productForm, category_id: e.target.value })}
-                          >
-                            <option value="">Select Category</option>
-                            {categories.filter(c => c).map((cat) => (
-                              <option key={cat.id} value={cat.id}>{cat.name}</option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                    </div>
+        <div className="sm-listing-tabs" role="tablist">
+          {TABS.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={activeSection === tab.id}
+              className={`sm-listing-tab ${activeSection === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveSection(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
-                    {/* Pricing & Stock Card */}
-                    <div className="card border-0 shadow-sm p-3" style={{ borderRadius: '16px' }}>
-                      <h6 className="text-dark fw-bold mb-3 d-flex align-items-center gap-2">
-                        <Tag size={18} className="text-primary" /> Inventory Parameters
-                      </h6>
-                      <div className="row g-3">
-                        <div className="col-md-6">
-                          <label className="form-label small fw-bold text-muted mb-1">Unit Price (USD)</label>
-                          <div className="input-group">
-                            <span className="input-group-text border-0 bg-light small fw-bold">$</span>
-                            <input
-                              type="number"
-                              className="form-control border-0 bg-light shadow-none"
-                              style={{ borderTopRightRadius: '8px', borderBottomRightRadius: '8px' }}
-                              value={productForm.price}
-                              onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
-                            />
-                          </div>
-                        </div>
-                        <div className="col-md-6">
-                          <label className="form-label small fw-bold text-muted mb-1">Discount Price (USD)</label>
-                          <div className="input-group">
-                            <span className="input-group-text border-0 bg-light small fw-bold">$</span>
-                            <input
-                              type="number"
-                              className="form-control border-0 bg-light shadow-none"
-                              style={{ borderTopRightRadius: '8px', borderBottomRightRadius: '8px' }}
-                              placeholder="Optional - Leave empty for no discount"
-                              value={productForm.discount_price || ''}
-                              onChange={(e) => setProductForm({ ...productForm, discount_price: e.target.value })}
-                            />
-                          </div>
-                        </div>
-                        <div className="col-md-6">
-                          <label className="form-label small fw-bold text-muted mb-1">Initial Stock Quantity</label>
-                          <input
-                            type="number"
-                            className="form-control border-0 bg-light shadow-none"
-                            style={{ borderRadius: '8px' }}
-                            placeholder="0.00"
-                            value={productForm.stock_quantity}
-                            onChange={(e) => setProductForm({ ...productForm, stock_quantity: e.target.value })}
-                          />
-                        </div>
-                        <div className="col-md-6">
-                          <label className="form-label small fw-bold text-muted mb-1">Barcode</label>
-                          <input
-                            type="text"
-                            className="form-control border-0 bg-light shadow-none"
-                            style={{ borderRadius: '8px' }}
-                            placeholder="e.g. 1234567890123 (Optional)"
-                            value={productForm.barcode || ''}
-                            onChange={(e) => setProductForm({ ...productForm, barcode: e.target.value })}
-                          />
-                          <small className="text-muted d-block mt-1" style={{ fontSize: '0.7rem' }}>
-                            Product barcode for inventory tracking
-                          </small>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+      <div className="sm-listing-page-body">
+        {activeSection === 'photos' && (
+          <section className="sm-listing-section">
+            <h2 className="sm-listing-section-title">
+              <ImageIcon size={18} className="me-1" style={{ verticalAlign: '-3px' }} />
+              Photos
+            </h2>
+            <p className="sm-listing-section-desc">
+              Show different angles of your product. The first image is used as the cover.
+            </p>
+            <p className="sm-listing-section-note">Add photos · drag order via Set cover</p>
 
-                {/* Left Column: Visuals & Notes */}
-                <div className="col-lg-5">
-                  <div className="d-flex flex-column h-100 gap-4">
-                    
-                    {/* Media Card */}
-                    <div className="card border-0 shadow-sm p-3 flex-grow-1" style={{ borderRadius: '16px' }}>
-                      <h6 className="text-dark fw-bold mb-3 d-flex align-items-center gap-2">
-                        <ImageIcon size={18} className="text-primary" /> Product Assets
-                      </h6>
-                      
-                      <div className="bg-light border-2 border-dashed rounded-4 p-4 text-center mb-3" 
-                           style={{ borderColor: '#cbd5e1' }}>
-                        <input
-                          type="file"
-                          id="imageUpload"
-                          className="d-none"
-                          multiple
-                          onChange={(e) => handleImageUpload(e.target.files)}
-                          disabled={uploadingImages}
-                        />
-                        <label htmlFor="imageUpload" className="cursor-pointer w-100 mb-0">
-                          <div className="bg-white rounded-circle shadow-sm p-3 mx-auto mb-2 d-flex align-items-center justify-content-center" style={{ width: '60px', height: '60px' }}>
-                            <UploadCloud size={24} className="text-primary" />
-                          </div>
-                          <p className="mb-0 fw-bold small text-dark">Drop images here</p>
-                          <p className="text-muted" style={{ fontSize: '0.65rem' }}>PNG or JPG (Max 5MB)</p>
-                        </label>
-                      </div>
-
-                      {/* Image Preview Grid */}
-                      <div className="row g-2">
-                        {uploadedImages.map((img, idx) => (
-                          <div key={idx} className="col-4">
-                            <div className="position-relative rounded overflow-hidden shadow-sm" style={{ height: '70px', border: '1px solid #e2e8f0' }}>
-                              <img src={img} alt="Preview" className="w-100 h-100" style={{ objectFit: 'cover' }} />
-                              <button 
-                                className="btn btn-danger p-0 position-absolute top-0 end-0 m-1 d-flex align-items-center justify-content-center"
-                                onClick={() => removeUploadedImage(idx)}
-                                style={{ width: '18px', height: '18px', borderRadius: '4px', fontSize: '10px' }}
-                              >×</button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Batch Instructions Card */}
-                    <div className="card border-0 shadow-sm p-3" style={{ borderRadius: '16px', backgroundColor: '#f8fafc' }}>
-                      <div className="d-flex gap-2">
-                        <AlertCircle size={18} className="text-warning flex-shrink-0" />
-                        <div>
-                          <p className="small fw-bold text-dark mb-1">Batch Registration Note:</p>
-                          <p className="text-muted mb-0" style={{ fontSize: '0.75rem', lineHeight: '1.4' }}>
-                            Chemical product listings should include concentration or pack size in the title (e.g. <strong>"Cleaner 5 Litre"</strong>). 
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-
-                {/* Full Width Description Area */}
-                <div className="col-12 mt-0">
-                  <div className="card border-0 shadow-sm p-3" style={{ borderRadius: '16px' }}>
-                    <label className="form-label small fw-bold text-muted mb-2 d-flex align-items-center gap-2">
-                      <Layers size={14} className="text-primary" /> Technical Description & Formulation Notes
-                    </label>
-                    <textarea
-                      className="form-control border-0 bg-light shadow-none"
-                      style={{ borderRadius: '8px' }}
-                      rows="2"
-                      placeholder="Add chemical details, handling warnings, or storage requirements..."
-                      value={productForm.description}
-                      onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
-                    ></textarea>
-                  </div>
-                </div>
-
+            <input
+              type="file"
+              id="imageUpload"
+              className="d-none"
+              multiple
+              accept="image/*"
+              onChange={(e) => handleImageUpload(e.target.files)}
+              disabled={uploadingImages}
+            />
+            <label htmlFor="imageUpload" className="sm-listing-dropzone">
+              <UploadCloud size={28} className="mb-2" />
+              <div className="fw-semibold">
+                {uploadingImages ? 'Uploading…' : 'Drag and drop files or'}
               </div>
-            </div>
+              <span className="sm-btn-dark mt-2" style={{ pointerEvents: 'none' }}>
+                + Upload
+              </span>
+            </label>
 
-            {/* Footer - Solid Action Bar */}
-            <div className="modal-footer border-0 p-4 bg-white shadow-lg d-flex justify-content-between align-items-center">
-              <button 
-                className="btn btn-link text-decoration-none text-muted fw-bold small" 
-                onClick={onClose}
-              >
-                DISCARD CHANGES
-              </button>
-              
-              <div className="d-flex gap-2">
-                <button 
-                  className="btn btn-primary px-5 py-2 fw-bold d-flex align-items-center gap-2 shadow"
-                  style={{ backgroundColor: '#0284c7', border: 'none', borderRadius: '10px' }}
-                  onClick={handleSaveProduct}
+            {uploadedImages.length > 0 && (
+              <div className="sm-listing-photo-grid">
+                {uploadedImages.map((img, idx) => (
+                  <div
+                    key={`${img}-${idx}`}
+                    className={`sm-listing-photo ${idx === 0 ? 'is-cover' : ''}`}
+                  >
+                    <img src={img} alt={`Listing ${idx + 1}`} />
+                    {idx === 0 && <span className="sm-listing-photo-badge">Featured</span>}
+                    <div className="sm-listing-photo-actions">
+                      {idx !== 0 && (
+                        <button type="button" onClick={() => setCoverImage?.(idx)}>
+                          Set cover
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        className="danger"
+                        onClick={() => removeUploadedImage(idx)}
+                        aria-label="Remove photo"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {activeSection === 'details' && (
+          <section className="sm-listing-section">
+            <h2 className="sm-listing-section-title">
+              <ClipboardList size={18} className="me-1" style={{ verticalAlign: '-3px' }} />
+              Item details
+            </h2>
+            <p className="sm-listing-section-desc">
+              Title, description, category, and identifiers for this listing.
+            </p>
+            <div className="row g-3">
+              <div className="col-12">
+                <label className="form-label">Title</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Listing title"
+                  value={productForm.name}
+                  onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">SKU</label>
+                <div className="input-group">
+                  <span className="input-group-text bg-white">
+                    <Hash size={14} />
+                  </span>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Unique SKU"
+                    value={productForm.sku || ''}
+                    onChange={(e) => setProductForm({ ...productForm, sku: e.target.value })}
+                  />
+                </div>
+                <small className="text-muted" style={{ fontSize: '0.7rem' }}>
+                  Required — must be unique
+                </small>
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Category *</label>
+                <select
+                  className="form-select"
+                  required
+                  value={productForm.category_id}
+                  onChange={(e) =>
+                    setProductForm({ ...productForm, category_id: e.target.value })
+                  }
                 >
-                  <Save size={18} />
-                  {editingProduct ? 'Update Formulation' : 'Finalize Registration'}
+                  <option value="">Select category</option>
+                  {(categories || [])
+                    .filter((c) => c)
+                    .map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                </select>
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Barcode</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Optional"
+                  value={productForm.barcode || ''}
+                  onChange={(e) => setProductForm({ ...productForm, barcode: e.target.value })}
+                />
+              </div>
+              <div className="col-12">
+                <label className="form-label">
+                  <Layers size={12} className="me-1" />
+                  Description
+                </label>
+                <textarea
+                  className="form-control"
+                  rows="6"
+                  placeholder="Describe your listing…"
+                  value={productForm.description}
+                  onChange={(e) =>
+                    setProductForm({ ...productForm, description: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+          </section>
+        )}
+
+        {activeSection === 'options' && (
+          <section className="sm-listing-section">
+            <h2 className="sm-listing-section-title">
+              <Ruler size={18} className="me-1" style={{ verticalAlign: '-3px' }} />
+              Item options
+            </h2>
+            <p className="sm-listing-section-desc">
+              Add options like size that may affect available inventory quantities.
+            </p>
+
+            <div className="sm-variation-block">
+              <div className="sm-variation-block-head">
+                <div>
+                  <h3 className="sm-variation-title">Variations</h3>
+                  <p className="sm-muted mb-0" style={{ fontSize: '0.82rem' }}>
+                    Size options buyers can choose on the product page.
+                  </p>
+                </div>
+                <button type="button" className="sm-btn-outline" onClick={openSizeModal}>
+                  <Plus size={14} /> {hasSizes ? 'Edit size' : 'Add variation'}
+                </button>
+              </div>
+
+              {!hasSizes ? (
+                <p className="sm-muted mb-0 mt-3" style={{ fontSize: '0.85rem' }}>
+                  No variations yet. Add a Size variation to track stock per option.
+                </p>
+              ) : (
+                <div className="sm-size-rows mt-3">
+                  <div className="sm-size-row sm-size-row-head">
+                    <span>Size</span>
+                    <span>Quantity</span>
+                    <span />
+                  </div>
+                  {sizes.map((row, index) => (
+                    <div key={`${row.size}-${index}`} className="sm-size-row">
+                      <span className="fw-semibold">{row.size}</span>
+                      <input
+                        type="number"
+                        min="0"
+                        className="form-control"
+                        value={row.quantity}
+                        onChange={(e) => updateSizeQty(index, e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        className="sm-icon-btn"
+                        onClick={() => removeSizeRow(index)}
+                        aria-label={`Remove ${row.size}`}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
+                  <div className="d-flex justify-content-between align-items-center mt-2">
+                    <button type="button" className="sm-link-btn p-0" onClick={clearSizes}>
+                      Remove size variation
+                    </button>
+                    <strong>Total stock: {sizeTotal}</strong>
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+        {activeSection === 'pricing' && (
+          <section className="sm-listing-section">
+            <h2 className="sm-listing-section-title">
+              <Tag size={18} className="me-1" style={{ verticalAlign: '-3px' }} />
+              Pricing & inventory
+            </h2>
+            <p className="sm-listing-section-desc">Set price, stock, and listing status.</p>
+            <div className="row g-3">
+              <div className="col-md-4">
+                <label className="form-label">Price (USD)</label>
+                <div className="input-group">
+                  <span className="input-group-text bg-white">$</span>
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={productForm.price}
+                    onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="col-md-4">
+                <label className="form-label">Discount price</label>
+                <div className="input-group">
+                  <span className="input-group-text bg-white">$</span>
+                  <input
+                    type="number"
+                    className="form-control"
+                    placeholder="Optional"
+                    value={productForm.discount_price || ''}
+                    onChange={(e) =>
+                      setProductForm({ ...productForm, discount_price: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+              <div className="col-md-4">
+                <label className="form-label">Quantity</label>
+                {hasSizes ? (
+                  <div className="sm-managed-qty">
+                    <strong>{sizeTotal}</strong>
+                    <span className="sm-muted">Managed per size</span>
+                  </div>
+                ) : (
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={productForm.stock_quantity}
+                    onChange={(e) =>
+                      setProductForm({ ...productForm, stock_quantity: e.target.value })
+                    }
+                  />
+                )}
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Status</label>
+                <select
+                  className="form-select"
+                  value={productForm.status || 'active'}
+                  onChange={(e) => setProductForm({ ...productForm, status: e.target.value })}
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+            </div>
+          </section>
+        )}
+      </div>
+
+      <div className="sm-listing-page-foot">
+        <button type="button" className="sm-btn-outline" onClick={onClose}>
+          Cancel
+        </button>
+        <button type="button" className="sm-btn-dark" onClick={handleSaveProduct}>
+          <Save size={16} />
+          {isEdit ? 'Publish changes' : 'Publish'}
+        </button>
+      </div>
+
+      {showSizeModal && (
+        <div className="sm-size-modal-backdrop" role="presentation">
+          <div className="sm-size-modal" role="dialog" aria-modal="true" aria-labelledby="size-modal-title">
+            <div className="sm-size-modal-head">
+              <div>
+                <h3 id="size-modal-title" className="mb-0">
+                  Size
+                </h3>
+                <p className="sm-muted mb-0" style={{ fontSize: '0.8rem' }}>
+                  Variation
+                </p>
+              </div>
+              <button
+                type="button"
+                className="sm-icon-btn"
+                onClick={() => setShowSizeModal(false)}
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="sm-size-modal-body">
+              <p className="sm-muted" style={{ fontSize: '0.85rem' }}>
+                Buyers can choose from the following options. Enter sizes like Small, Medium, 6&quot;,
+                or XL.
+              </p>
+
+              <label className="form-label">Options</label>
+              <div className="sm-size-option-input">
+                <input
+                  type="text"
+                  className="form-control"
+                  list="sm-size-suggestions"
+                  placeholder="Enter an option…"
+                  value={optionInput}
+                  onChange={(e) => setOptionInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addDraftOption(optionInput);
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  className="sm-btn-outline"
+                  onClick={() => addDraftOption(optionInput)}
+                >
+                  Add
+                </button>
+              </div>
+              <datalist id="sm-size-suggestions">
+                {catalogSizes.map((s) => (
+                  <option key={s.id || s.size} value={s.size} />
+                ))}
+              </datalist>
+
+              {draftOptions.length > 0 && (
+                <div className="sm-size-chips mt-3">
+                  {draftOptions.map((opt) => (
+                    <span key={opt} className="sm-size-chip">
+                      {opt}
+                      <button type="button" onClick={() => removeDraftOption(opt)} aria-label={`Remove ${opt}`}>
+                        <X size={12} />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="sm-size-modal-foot">
+              <button type="button" className="sm-link-btn" onClick={() => setShowSizeModal(false)}>
+                Cancel
+              </button>
+              <div className="d-flex align-items-center gap-2">
+                {draftOptions.length === 0 && (
+                  <span className="sm-muted" style={{ fontSize: '0.78rem' }}>
+                    Add at least 1 option
+                  </span>
+                )}
+                <button
+                  type="button"
+                  className="sm-btn-dark"
+                  disabled={draftOptions.length === 0}
+                  onClick={applySizeOptions}
+                >
+                  Done
                 </button>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </>
+      )}
+    </div>
   );
 };
 

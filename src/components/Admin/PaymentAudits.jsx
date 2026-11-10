@@ -126,7 +126,7 @@ const PaymentAudits = () => {
     return (
       <div className="card pa-audit-panel pa-main-card">
         <div className="card-body text-center py-5">
-          <ShieldAlert size={42} style={{ color: '#f26522' }} className="mb-3" />
+          <ShieldAlert size={42} className="mb-3" />
           <h5 className="fw-bold">Super Admin Access Required</h5>
           <p className="text-muted mb-0">The payment audit trail is restricted to super admin accounts.</p>
         </div>

@@ -170,6 +170,16 @@ const TopBar = ({ onMenuToggle, categories: parentCategories }) => {
       {/* Main Single Row Links Bar (Bravo Bells Theme) */}
       <nav className="ts-main-navbar">
         <div className="container d-flex align-items-center justify-content-between">
+          {/* Desktop left: open sidebar (same role as mobile hamburger) */}
+          <button
+            type="button"
+            className="ts-action-icon-btn ts-nav-menu-btn d-none d-lg-inline-flex"
+            onClick={onMenuToggle}
+            aria-label="Open menu"
+          >
+            <FaBars />
+          </button>
+
           <ul className="ts-nav-links d-none d-lg-flex m-0 p-0">
             {/* 1. Contact */}
             <li className="ts-nav-item">

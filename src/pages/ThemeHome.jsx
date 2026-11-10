@@ -14,6 +14,7 @@ import SideDrawer from '../components/SideDrawer';
 import TopBar from '../components/TopBar'; 
 import ThemeFooter from '../components/ThemeFooter';
 import { productPath, setPageSeo, injectJsonLd, removeJsonLd, SITE_NAME, SITE_URL, SITE_TAGLINE } from '../utils/seo';
+import { discountPercent, effectivePrice, formatMoney, hasDiscount } from '../utils/pricing';
 
 import '../assets/css/ThemeHome.css';
 
@@ -184,7 +185,7 @@ const ThemeHome = () => {
     const handleAddToCart = (product) => {
         addToCart({
             ...product,
-            price: product.discount_price || product.price
+            price: effectivePrice(product)
         });
         toast.success(`${product.name} added to cart!`);
     };
@@ -192,7 +193,7 @@ const ThemeHome = () => {
     const handleBuyNow = (product) => {
         addToCart({
             ...product,
-            price: product.discount_price || product.price
+            price: effectivePrice(product)
         }, 1);
         navigate('/checkout');
     };
@@ -288,34 +289,63 @@ const ThemeHome = () => {
 
                         <div className="product-grid-modern">
                             {productsByCategory[category.id]?.map((product) => (
-                                <div key={product.id} className="item-card">
+                                <div
+                                  key={product.id}
+                                  className="item-card"
+                                  role="link"
+                                  tabIndex={0}
+                                  onClick={() => navigate(productPath(product))}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                      e.preventDefault();
+                                      navigate(productPath(product));
+                                    }
+                                  }}
+                                >
                                     <div className="item-thumb">
                                         <img src={product.images?.[0] || product.image_url || '/src/assets/images/tshirt-img.png'} alt={product.name} />
                                         {/* Discount Badge on Image */}
-                                        {product.discount_price && product.discount_price < product.price && (
+                                        {hasDiscount(product) && (
                                             <div className="discount-badge-image">
-                                                -{Math.round(((product.price - product.discount_price) / product.price) * 100)}%
+                                                -{discountPercent(product)}%
                                             </div>
                                         )}
                                         <div className="item-overlay">
-                                            <button onClick={() => handleAddToCart(product)} className="circle-btn"><FaShoppingCart /></button>
-                                            <button onClick={() => navigate(productPath(product))} className="circle-btn"><FaSearch /></button>
+                                            <button
+                                              type="button"
+                                              onClick={(e) => { e.stopPropagation(); handleAddToCart(product); }}
+                                              className="circle-btn"
+                                            >
+                                              <FaShoppingCart />
+                                            </button>
+                                            <button
+                                              type="button"
+                                              onClick={(e) => { e.stopPropagation(); navigate(productPath(product)); }}
+                                              className="circle-btn"
+                                            >
+                                              <FaSearch />
+                                            </button>
                                         </div>
                                     </div>
                                     <div className="item-details">
                                         <h3 className="item-name">{product.name}</h3>
                                         <div className="item-pricing">
-                                            {product.discount_price && product.discount_price < product.price ? (
+                                            {hasDiscount(product) ? (
                                                 <>
-                                                    <span className="price-original">${product.price}</span>
-                                                    <span className="price-now">${product.discount_price}</span>
-                                                
+                                                    <span className="price-original">{formatMoney(product.price)}</span>
+                                                    <span className="price-now">{formatMoney(product.discount_price)}</span>
                                                 </>
                                             ) : (
-                                                <span className="price-now">${product.price}</span>
+                                                <span className="price-now">{formatMoney(product.price)}</span>
                                             )}
                                         </div>
-                                        <button onClick={() => handleAddToCart(product)} className="card-buy-btn">Add to Cart</button>
+                                        <button
+                                          type="button"
+                                          onClick={(e) => { e.stopPropagation(); handleAddToCart(product); }}
+                                          className="card-buy-btn"
+                                        >
+                                          Add to Cart
+                                        </button>
                                     </div>
                                 </div>
                             ))}

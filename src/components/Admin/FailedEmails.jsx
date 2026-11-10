@@ -95,25 +95,26 @@ const FailedEmails = () => {
 
   return (
     <div className="fe-panel">
-      <div className="card border-0 shadow-sm" style={{ borderRadius: '16px' }}>
-        <div className="card-header d-flex justify-content-between align-items-center" style={{ backgroundColor: '#262626', color: 'white', borderRadius: '16px 16px 0 0' }}>
-          <h5 className="mb-0" style={{ color: 'white' }}>
+      <div className="card border-0" style={{ borderRadius: '12px', border: '1px solid #e5e0d8' }}>
+        <div
+          className="card-header d-flex justify-content-between align-items-center flex-wrap gap-2"
+          style={{ backgroundColor: '#fff', color: '#222', borderBottom: '1px solid #e5e0d8' }}
+        >
+          <h5 className="mb-0" style={{ color: '#222', fontWeight: 700 }}>
             <Mail size={20} className="me-2" />
             Failed Emails
           </h5>
           <div className="d-flex gap-2">
             <button
-              className="btn btn-sm btn-success"
+              type="button"
+              className="sm-btn-dark"
               onClick={handleRetryAll}
               disabled={retrying || failedEmails.filter((e) => e.status === 'pending').length === 0}
             >
-              <RefreshCw size={16} className={`me-1 ${retrying ? 'spin' : ''}`} />
-              {retrying ? 'Retrying...' : 'Retry All Pending'}
+              <RefreshCw size={16} className={`${retrying ? 'spin' : ''}`} />
+              {retrying ? 'Retrying…' : 'Retry all pending'}
             </button>
-            <button
-              className="btn btn-sm btn-outline-light"
-              onClick={fetchFailedEmails}
-            >
+            <button type="button" className="sm-btn-outline" onClick={fetchFailedEmails}>
               Refresh
             </button>
           </div>

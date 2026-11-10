@@ -10,6 +10,7 @@ import ThemeFooter from '../components/ThemeFooter';
 import FilterBar from '../components/FilterBar';
 import { useCart } from '../context/CartContext';
 import { productPath, setPageSeo } from '../utils/seo';
+import { discountPercent, effectivePrice, formatMoney, hasDiscount } from '../utils/pricing';
 import '../assets/css/AllProducts.css';
 
 const AllProducts = () => {
@@ -79,7 +80,7 @@ const AllProducts = () => {
   const handleAddToCart = (product) => {
     addToCart({ 
       ...product, 
-      price: product.discount_price || product.price
+      price: effectivePrice(product)
     }, 1);
     toast.success(`${product.name} added to cart!`);
   };
@@ -87,7 +88,7 @@ const AllProducts = () => {
   const handleBuyNow = (product) => {
     addToCart({ 
       ...product, 
-      price: product.discount_price || product.price
+      price: effectivePrice(product)
     }, 1);
     navigate('/checkout');
   };
@@ -103,9 +104,9 @@ const AllProducts = () => {
           alt={product.name} 
         />
         {/* Discount Badge on Image */}
-        {product.discount_price && product.discount_price < product.price && (
+        {hasDiscount(product) && (
           <div className="discount-badge-image">
-            -{Math.round(((product.price - product.discount_price) / product.price) * 100)}%
+            -{discountPercent(product)}%
           </div>
         )}
         <div className="item-overlay">
@@ -118,13 +119,13 @@ const AllProducts = () => {
         <div className="item-meta">
           <h5 className="item-name" title={product.name}>{product.name}</h5>
           <div className="item-pricing">
-            {product.discount_price && product.discount_price < product.price ? (
+            {hasDiscount(product) ? (
               <>
-                <span className="price-original">${product.price}</span>
-                <span className="price-now">${product.discount_price}</span>
+                <span className="price-original">{formatMoney(product.price)}</span>
+                <span className="price-now">{formatMoney(product.discount_price)}</span>
               </>
             ) : (
-              <span className="price-now">${product.price}</span>
+              <span className="price-now">{formatMoney(product.price)}</span>
             )}
           </div>
           <button className="card-buy-btn" onClick={() => handleBuyNow(product)}>Buy Now</button>

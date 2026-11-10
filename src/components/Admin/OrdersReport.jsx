@@ -171,7 +171,7 @@ const OrdersReport = () => {
       <div className="or-header">
         <div>
           <h4 className="or-title d-flex align-items-center gap-2">
-            <BarChart3 size={22} style={{ color: '#f26522' }} /> Orders Report
+            <BarChart3 size={22} /> Orders Report
           </h4>
           <p className="or-subtitle">Custom date-range performance for Charlie Bells · {rangeLabel}</p>
         </div>
