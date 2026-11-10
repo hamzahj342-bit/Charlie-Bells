@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { lazy, Suspense } from 'react';
 import ThemeHome from './pages/ThemeHome';
 import About from './pages/About';
+import BellPurpose from './pages/BellPurpose';
 import DynamicCategory from './pages/DynamicCategory';
 import ThemeProductDetail from './pages/ThemeProductDetail';
 // import ProductDetail from './pages/ProductDetail';
@@ -47,6 +48,7 @@ function App() {
                     <Route path="/cart" element={<Cart />} />
                     <Route path="/checkout" element={<Checkout />} />
                     <Route path="/about" element={<About />} />
+                    <Route path="/bell-purpose" element={<BellPurpose />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/all-products" element={<AllProducts />} />
                     <Route path="/product/:slug" element={<ThemeProductDetail />} />

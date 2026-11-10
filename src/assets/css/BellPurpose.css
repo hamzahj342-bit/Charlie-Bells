@@ -1,0 +1,223 @@
+/* Match storefront dark charcoal + gold (same as index.css brand tokens) */
+.bp-page {
+  min-height: 100vh !important;
+  width: 100%;
+  background: #0e0d0a !important;
+  color: #f5f0e8 !important;
+}
+
+.bp-page .container {
+  background: transparent !important;
+}
+
+.bp-hero {
+  padding: 72px 0 56px;
+  background:
+    radial-gradient(ellipse at top right, rgba(236, 198, 109, 0.14), transparent 55%),
+    linear-gradient(180deg, #231815 0%, #0e0d0a 100%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bp-hero-inner {
+  max-width: 760px;
+}
+
+.bp-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ecc66d !important;
+}
+
+.bp-title {
+  margin: 0 0 16px;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  line-height: 1.15;
+  color: #ffffff !important;
+}
+
+.bp-lead {
+  margin: 0 0 28px;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: rgba(245, 240, 232, 0.85) !important;
+}
+
+.bp-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 22px;
+  border-radius: 999px;
+  background: #ecc66d !important;
+  color: #150c0a !important;
+  font-weight: 700;
+  text-decoration: none;
+  border: none;
+}
+
+.bp-cta:hover {
+  background: #ecaa4d !important;
+  color: #150c0a !important;
+}
+
+.bp-cta-secondary {
+  background: transparent !important;
+  border: 1px solid rgba(236, 198, 109, 0.5) !important;
+  color: #ffffff !important;
+}
+
+.bp-cta-secondary:hover {
+  background: rgba(236, 198, 109, 0.12) !important;
+  color: #ffffff !important;
+}
+
+.bp-section {
+  padding: 56px 0;
+  background: #0e0d0a !important;
+}
+
+.bp-section-alt {
+  background: #150c0a !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.bp-section-title {
+  margin: 0 0 12px;
+  font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+  font-weight: 800;
+  color: #ffffff !important;
+}
+
+.bp-section-desc {
+  max-width: 720px;
+  margin: 0 0 28px;
+  color: rgba(245, 240, 232, 0.78) !important;
+  line-height: 1.7;
+}
+
+.bp-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.bp-card {
+  background: #231815 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.bp-card-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(236, 198, 109, 0.14);
+  color: #ecc66d !important;
+  margin-bottom: 12px;
+}
+
+.bp-card h3 {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #ffffff !important;
+}
+
+.bp-card p {
+  margin: 0;
+  color: rgba(245, 240, 232, 0.75) !important;
+  line-height: 1.65;
+  font-size: 0.95rem;
+}
+
+.bp-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 760px;
+}
+
+.bp-step {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.bp-step-num {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #ecc66d !important;
+}
+
+.bp-step h3 {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+  color: #ffffff !important;
+}
+
+.bp-step p {
+  margin: 0;
+  color: rgba(245, 240, 232, 0.75) !important;
+  line-height: 1.65;
+}
+
+.bp-story {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.bp-story p {
+  color: rgba(245, 240, 232, 0.78) !important;
+  line-height: 1.7;
+  margin: 0 0 14px;
+}
+
+.bp-aside {
+  background: #231815 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 20px 22px;
+}
+
+.bp-aside h3 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  color: #ecc66d !important;
+}
+
+.bp-aside ul {
+  margin: 0;
+  padding-left: 18px;
+  color: rgba(245, 240, 232, 0.8) !important;
+  line-height: 1.7;
+}
+
+.bp-aside li + li {
+  margin-top: 8px;
+}
+
+@media (max-width: 991px) {
+  .bp-card-grid,
+  .bp-story {
+    grid-template-columns: 1fr;
+  }
+
+  .bp-hero {
+    padding: 48px 0 40px;
+  }
+}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ShoppingCart, Eye, Package, Truck, CheckCircle, Clock, Ban } from 'lucide-react';
 import { themeApi } from '../../services/themeApi';
 import toast from 'react-hot-toast';
@@ -52,19 +52,37 @@ const STATUS_STYLES = {
 
 const OrderManagement = ({ orders = [], onOrdersChange }) => {
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [localOrders, setLocalOrders] = useState(orders);
+  const [updatingId, setUpdatingId] = useState(null);
+
+  useEffect(() => {
+    setLocalOrders(orders);
+  }, [orders]);
 
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
+    setUpdatingId(orderId);
     try {
       await themeApi.updateOrderStatus(orderId, { status: newStatus });
-      toast.success(`Order marked as ${newStatus}`);
 
+      // Immediate UI move (Pending → Processing, etc.) even if full refresh is slow
+      setLocalOrders((prev) =>
+        prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
+      );
       if (selectedOrder && selectedOrder.id === orderId) {
         setSelectedOrder({ ...selectedOrder, status: newStatus });
       }
 
-      onOrdersChange?.();
+      toast.success(`Order marked as ${newStatus}`);
+
+      try {
+        await onOrdersChange?.();
+      } catch (refreshError) {
+        console.error('Orders refresh failed after status update:', refreshError);
+      }
     } catch {
       toast.error('Failed to update status');
+    } finally {
+      setUpdatingId(null);
     }
   };
 
@@ -109,18 +127,18 @@ const OrderManagement = ({ orders = [], onOrdersChange }) => {
     <div>
       <div className="sm-listings-header">
         <p className="sm-muted mb-0" style={{ fontSize: '0.9rem' }}>
-          Total orders: {orders.length}
+          Total orders: {localOrders.length}
         </p>
       </div>
 
-      {orders.length === 0 ? (
+      {localOrders.length === 0 ? (
         <div className="sm-card sm-empty">
           <ShoppingCart size={40} className="mb-2 opacity-50" />
           <p className="mb-0">No orders yet.</p>
         </div>
       ) : (
         STATUS_GROUPS.map((group) => {
-          const groupOrders = orders.filter((o) => o.status === group.key);
+          const groupOrders = localOrders.filter((o) => o.status === group.key);
           if (groupOrders.length === 0) return null;
           const Icon = group.icon;
           return (
@@ -132,6 +150,7 @@ const OrderManagement = ({ orders = [], onOrdersChange }) => {
               </div>
               {groupOrders.map((order) => {
                 const items = order.order_items || [];
+                const busy = updatingId === order.id;
                 return (
                   <article key={order.id} className="sm-order-card">
                     <div>
@@ -184,27 +203,30 @@ const OrderManagement = ({ orders = [], onOrdersChange }) => {
                         <button
                           type="button"
                           className="sm-btn-dark"
+                          disabled={busy}
                           onClick={() => handleUpdateOrderStatus(order.id, 'processing')}
                         >
-                          Start processing
+                          {busy ? 'Updating…' : 'Start processing'}
                         </button>
                       )}
                       {group.key === 'processing' && (
                         <button
                           type="button"
                           className="sm-btn-dark"
+                          disabled={busy}
                           onClick={() => handleUpdateOrderStatus(order.id, 'shipped')}
                         >
-                          Mark shipped
+                          {busy ? 'Updating…' : 'Mark shipped'}
                         </button>
                       )}
                       {group.key === 'shipped' && (
                         <button
                           type="button"
                           className="sm-btn-dark"
+                          disabled={busy}
                           onClick={() => handleUpdateOrderStatus(order.id, 'delivered')}
                         >
-                          Mark delivered
+                          {busy ? 'Updating…' : 'Mark delivered'}
                         </button>
                       )}
                     </div>

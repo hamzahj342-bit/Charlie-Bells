@@ -92,24 +92,40 @@ const Admin = () => {
   ];
 
   const refreshCatalog = useCallback(async () => {
-    const [productsRes, categoriesRes, ordersRes] = await Promise.all([
+    const [productsRes, categoriesRes, ordersRes] = await Promise.allSettled([
       themeApi.getProducts(),
       themeApi.getCategories(),
       themeApi.getAllOrders(),
     ]);
-    const nextProducts = productsRes.products || [];
-    const nextOrders = ordersRes.orders || [];
-    setProducts(nextProducts);
-    setCategories(categoriesRes || []);
-    setOrders(nextOrders);
-    setStats({
-      totalProducts: nextProducts.length,
-      totalOrders: nextOrders.length,
-      totalRevenue: nextOrders.reduce(
-        (sum, order) => sum + (parseFloat(order.total_amount) || 0),
-        0
-      ),
-    });
+
+    if (productsRes.status === 'fulfilled') {
+      const nextProducts = productsRes.value.products || [];
+      setProducts(nextProducts);
+      setStats((prev) => ({
+        ...prev,
+        totalProducts: nextProducts.length,
+      }));
+    }
+
+    if (categoriesRes.status === 'fulfilled') {
+      setCategories(categoriesRes.value || []);
+    }
+
+    if (ordersRes.status === 'fulfilled') {
+      const nextOrders = ordersRes.value.orders || [];
+      setOrders(nextOrders);
+      setStats((prev) => ({
+        ...prev,
+        totalProducts: prev.totalProducts ?? 0,
+        totalOrders: nextOrders.length,
+        totalRevenue: nextOrders.reduce(
+          (sum, order) => sum + (parseFloat(order.total_amount) || 0),
+          0
+        ),
+      }));
+    } else if (ordersRes.status === 'rejected') {
+      throw ordersRes.reason;
+    }
   }, []);
 
   useEffect(() => {

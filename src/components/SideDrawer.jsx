@@ -75,6 +75,9 @@ const SideDrawer = ({ isOpen, onClose }) => {
                 <Link to="/all-products" className="drawer-link" onClick={onClose}>
                   <ShoppingBag className="nav-icon" /> Shop Products
                 </Link>
+                <Link to="/bell-purpose" className="drawer-link" onClick={onClose}>
+                  <Info className="nav-icon" /> A Bell&apos;s Purpose
+                </Link>
                 <Link to="/about" className="drawer-link" onClick={onClose}>
                   <Info className="nav-icon" /> About Us
                 </Link>
